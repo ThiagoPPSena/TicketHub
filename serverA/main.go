@@ -1,6 +1,7 @@
 package main
 
 import (
+	"sharedPass/graphs"
 	"sharedPass/passages/routes"
 
 	"github.com/gin-gonic/gin"
@@ -11,6 +12,7 @@ func main() {
 	router := gin.Default()
 	routes.RegisterRoutes(router)
 
-	// Rota o
+	// Roda o server
+	graphs.ReadRoutes() // Carregando o gráfico na memória
 	router.Run(":8080") // Roda na porta 8080
 }
