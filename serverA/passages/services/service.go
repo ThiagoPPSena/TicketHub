@@ -9,7 +9,7 @@ import (
 
 func GetAllRoutes(origin string, destination string) ([]string, error) {
 
-	fmt.Println(graphs.Graph)
+	getOtherFlights()
 
 	return []string{"Salvador", "Sao Paulo", "Recife"}, nil
 }
@@ -39,7 +39,7 @@ func getOtherFlights() {
 		return
 	}
 
-	respC, err := http.Get("http://localhost:8081/passages/flights") // Fazendo uma requisição ao servidor C
+	respC, err := http.Get("http://localhost:8082/passages/flights") // Fazendo uma requisição ao servidor C
 	if err != nil {
 		fmt.Println("Erro:", err)
 		return
