@@ -1,225 +1,72 @@
 {
-    "ARACAJU": [
+  "SALVADOR": [
       {
-        "From": "ARACAJU",
-        "To": "SALVADOR",
-        "Seats": 500,
-        "Company": "A"
+          "From": "SALVADOR",
+          "To": "RECIFE",
+          "Seats": 300,
+          "Company": "C"
       },
       {
-        "From": "ARACAJU",
-        "To": "SAO PAULO",
-        "Seats": 500,
-        "Company": "A"
-      },
-      {
-        "From": "ARACAJU",
-        "To": "RECIFE",
-        "Seats": 500,
-        "Company": "A"
+          "From": "SALVADOR",
+          "To": "BRASILIA",
+          "Seats": 250,
+          "Company": "C"
       }
-    ],
-    "BELO HORIZONTE": [
+  ],
+  "PORTO ALEGRE": [
       {
-        "From": "BELO HORIZONTE",
-        "To": "SALVADOR",
-        "Seats": 500,
-        "Company": "A"
+          "From": "PORTO ALEGRE",
+          "To": "CURITIBA",
+          "Seats": 200,
+          "Company": "C"
       },
       {
-        "From": "BELO HORIZONTE",
-        "To": "FORTALEZA",
-        "Seats": 500,
-        "Company": "A"
-      },
-      {
-        "From": "BELO HORIZONTE",
-        "To": "RECIFE",
-        "Seats": 500,
-        "Company": "A"
-      },
-      {
-        "From": "BELO HORIZONTE",
-        "To": "RIO DE JANEIRO",
-        "Seats": 500,
-        "Company": "A"
+          "From": "PORTO ALEGRE",
+          "To": "FLORIANOPOLIS",
+          "Seats": 150,
+          "Company": "C"
       }
-    ],
-    "FORTALEZA": [
+  ],
+  "RECIFE": [
       {
-        "From": "FORTALEZA",
-        "To": "SAO PAULO",
-        "Seats": 500,
-        "Company": "A"
+          "From": "RECIFE",
+          "To": "FORTALEZA",
+          "Seats": 300,
+          "Company": "C"
       },
       {
-        "From": "FORTALEZA",
-        "To": "RIO DE JANEIRO",
-        "Seats": 500,
-        "Company": "A"
-      },
-      {
-        "From": "FORTALEZA",
-        "To": "SALVADOR",
-        "Seats": 500,
-        "Company": "A"
-      },
-      {
-        "From": "FORTALEZA",
-        "To": "RECIFE",
-        "Seats": 500,
-        "Company": "A"
+          "From": "RECIFE",
+          "To": "NATAL",
+          "Seats": 400,
+          "Company": "C"
       }
-    ],
-    "JOAO PESSOA": [
+  ],
+  "RIO DE JANEIRO": [
       {
-        "From": "JOAO PESSOA",
-        "To": "ARACAJU",
-        "Seats": 500,
-        "Company": "A"
+          "From": "RIO DE JANEIRO",
+          "To": "VITORIA",
+          "Seats": 250,
+          "Company": "C"
       },
       {
-        "From": "JOAO PESSOA",
-        "To": "SALVADOR",
-        "Seats": 500,
-        "Company": "A"
-      },
-      {
-        "From": "JOAO PESSOA",
-        "To": "RECIFE",
-        "Seats": 500,
-        "Company": "A"
-      },
-      {
-        "From": "JOAO PESSOA",
-        "To": "RIO DE JANEIRO",
-        "Seats": 500,
-        "Company": "A"
+          "From": "RIO DE JANEIRO",
+          "To": "SAO PAULO",
+          "Seats": 350,
+          "Company": "C"
       }
-    ],
-    "NATAL": [
+  ],
+  "GOIANIA": [
       {
-        "From": "NATAL",
-        "To": "SAO PAULO",
-        "Seats": 500,
-        "Company": "A"
+          "From": "GOIANIA",
+          "To": "BRASILIA",
+          "Seats": 100,
+          "Company": "C"
       },
       {
-        "From": "NATAL",
-        "To": "SALVADOR",
-        "Seats": 0,
-        "Company": "A"
-      },
-      {
-        "From": "NATAL",
-        "To": "RECIFE",
-        "Seats": 500,
-        "Company": "A"
+          "From": "GOIANIA",
+          "To": "MANAUS",
+          "Seats": 200,
+          "Company": "C"
       }
-    ],
-    "RECIFE": [
-      {
-        "From": "RECIFE",
-        "To": "SAO PAULO",
-        "Seats": 0,
-        "Company": "A"
-      },
-      {
-        "From": "RECIFE",
-        "To": "SALVADOR",
-        "Seats": 500,
-        "Company": "A"
-      },
-      {
-        "From": "RECIFE",
-        "To": "JOAO PESSOA",
-        "Seats": 500,
-        "Company": "A"
-      },
-      {
-        "From": "RECIFE",
-        "To": "RIO DE JANEIRO",
-        "Seats": 500,
-        "Company": "A"
-      }
-    ],
-    "RIO DE JANEIRO": [
-      {
-        "From": "RIO DE JANEIRO",
-        "To": "SALVADOR",
-        "Seats": 500,
-        "Company": "A"
-      },
-      {
-        "From": "RIO DE JANEIRO",
-        "To": "RECIFE",
-        "Seats": 500,
-        "Company": "A"
-      },
-      {
-        "From": "RIO DE JANEIRO",
-        "To": "JOAO PESSOA",
-        "Seats": 500,
-        "Company": "A"
-      },
-      {
-        "From": "RIO DE JANEIRO",
-        "To": "FORTALEZA",
-        "Seats": 500,
-        "Company": "A"
-      }
-    ],
-    "SALVADOR": [
-      {
-        "From": "SALVADOR",
-        "To": "SAO PAULO",
-        "Seats": 500,
-        "Company": "A"
-      },
-      {
-        "From": "SALVADOR",
-        "To": "RECIFE",
-        "Seats": 500,
-        "Company": "A"
-      },
-      {
-        "From": "SALVADOR",
-        "To": "RIO DE JANEIRO",
-        "Seats": 500,
-        "Company": "A"
-      },
-      {
-        "From": "SALVADOR",
-        "To": "BELO HORIZONTE",
-        "Seats": 500,
-        "Company": "A"
-      }
-    ],
-    "SAO PAULO": [
-      {
-        "From": "SAO PAULO",
-        "To": "SALVADOR",
-        "Seats": 500,
-        "Company": "A"
-      },
-      {
-        "From": "SAO PAULO",
-        "To": "RECIFE",
-        "Seats": 500,
-        "Company": "A"
-      },
-      {
-        "From": "SAO PAULO",
-        "To": "FORTALEZA",
-        "Seats": 500,
-        "Company": "A"
-      },
-      {
-        "From": "SAO PAULO",
-        "To": "NATAL",
-        "Seats": 0,
-        "Company": "A"
-      }
-    ]
-  }
-  
+  ]
+}
