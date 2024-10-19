@@ -39,7 +39,13 @@
           "To": "RIO DE JANEIRO",
           "Seats": 250,
           "Company": "B"
-      }
+      },
+      {
+        "From": "BELO HORIZONTE",
+        "To": "CURITIBA",
+        "Seats": 250,
+        "Company": "B"
+    }
   ],
   "FORTALEZA": [
       {

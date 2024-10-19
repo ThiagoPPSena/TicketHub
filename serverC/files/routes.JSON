@@ -53,7 +53,13 @@
           "To": "SAO PAULO",
           "Seats": 350,
           "Company": "C"
-      }
+      },
+      {
+        "From": "RIO DE JANEIRO",
+        "To": "CURITIBA",
+        "Seats": 250,
+        "Company": "C"
+    }
   ],
   "GOIANIA": [
       {
