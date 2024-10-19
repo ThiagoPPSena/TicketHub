@@ -10,7 +10,8 @@ func RegisterRoutes(router *gin.Engine) {
 
 	api := router.Group("/passages")
 	{
-		api.GET("/routes", passagesController.FindAll)
+		api.GET("/routes", passagesController.FindAllRoutes)
+		api.GET("/flights", passagesController.FindAllFlights)
 		api.POST("/buy", passagesController.Buy)
 	}
 
