@@ -2,6 +2,7 @@ package passagesController
 
 import (
 	"net/http"
+	"sharedPass/graphs"
 	passagesService "sharedPass/passages/services"
 
 	"github.com/gin-gonic/gin"
@@ -31,7 +32,15 @@ func FindAllFlights(context *gin.Context) {
 }
 
 func Buy(context *gin.Context) {
-	confirmation, err := passagesService.Buy([]string{"Salvador", "Sao Paulo"})
+
+	var buyRequest []graphs.Route
+	// Faz o binding dos dados do corpo da requisição para a estrutura `BuyRequest`
+	if err := context.BindJSON(&buyRequest); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+
+	confirmation, err := passagesService.Buy(buyRequest)
 
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
