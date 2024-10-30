@@ -31,15 +31,28 @@ func (vc *VectorClock) GetClock() []int {
 	return clockCopy
 }
 
-// Função para comparar dois relógios vetoriais, menor igual em todos os indices, causal. Se pelo menos um for maior, concorrencia.
+// Função para comparar dois relógios vetoriais, 1 = concorrencia, 0 não tem concorrencia
 func (vc *VectorClock) Compare(otherVC *VectorClock) int {
+	if len(vc.clock) != len(otherVC.clock) {
+		panic("Os vetores devem ter o mesmo comprimento para serem comparados")
+	}
+
+	isGreater := false
+	isLess := false
+
 	for i := range vc.clock {
 		if vc.clock[i] < otherVC.clock[i] {
-			return -1
+			isLess = true
 		} else if vc.clock[i] > otherVC.clock[i] {
-			return 1
+			isGreater = true
 		}
 	}
 
+	// Se ambos isGreater e isLess são verdadeiros, é concorrente (1).
+	if isGreater && isLess {
+		return 1
+	}
+
+	// Caso contrário, há uma relação de causalidade (0).
 	return 0
 }
