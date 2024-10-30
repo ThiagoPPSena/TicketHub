@@ -24,14 +24,14 @@ func (vc *VectorClock) Update(otherVC *VectorClock) {
 	}
 }
 
-// Função para obter o relógio vetorial
+// Função para obter uma copia do relógio vetorial
 func (vc *VectorClock) GetClock() []int {
 	clockCopy := make([]int, len(vc.clock))
 	copy(clockCopy, vc.clock)
 	return clockCopy
 }
 
-// Função para comparar dois relógios vetoriais
+// Função para comparar dois relógios vetoriais, menor igual em todos os indices, causal. Se pelo menos um for maior, concorrencia.
 func (vc *VectorClock) Compare(otherVC *VectorClock) int {
 	for i := range vc.clock {
 		if vc.clock[i] < otherVC.clock[i] {
