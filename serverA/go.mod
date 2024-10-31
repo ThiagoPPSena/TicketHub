@@ -1,6 +1,6 @@
 module sharedPass
 
-go 1.23
+go 1.21.6
 
 require (
 	github.com/bytedance/sonic v1.12.3 // indirect
