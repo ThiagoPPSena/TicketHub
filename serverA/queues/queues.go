@@ -5,6 +5,7 @@ import (
 	"sharedPass/graphs"
 	"sharedPass/vectorClock"
 	"sort"
+	"time"
 )
 
 type Solicitation struct {
@@ -21,6 +22,7 @@ func processQueue() {
 
 	go func() {
 		for request := range SolicitationsQueue {
+			fmt.Println("=========================================TO AQUI=========================================")
 			purchaseQueue = append(purchaseQueue, request) // Adiciona cada solicitação à fila slice
 			fmt.Printf("Quantidade de solicitações na fila: %d\n", len(purchaseQueue))
 		}
@@ -28,6 +30,7 @@ func processQueue() {
 
 	// Processamento das solicitações na fila ilimitada
 	for {
+		time.Sleep(500 * time.Millisecond)
 		if len(purchaseQueue) > 0 {
 			// Ordena a fila slice com base no relógio vetorial
 			sort.Slice(purchaseQueue, func(i, j int) bool {
