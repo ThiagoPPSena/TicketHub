@@ -52,7 +52,7 @@ func getRoutes(url string) ([][]Route, error) {
 }
 
 func main() {
-	urlGet := craftGetURL("http://localhost:8080/passages/routes", "ARACAJU", "PORTO VELHO")
+	urlGet := craftGetURL("http://localhost:8080/passages/routes", "BELO HORIZONTE", "SALVADOR")
 	serverURLs := []string{
 		"http://localhost:8080/passages/buy",
 		"http://localhost:8081/passages/buy",
@@ -78,7 +78,7 @@ func main() {
 	}
 
 	var wg sync.WaitGroup
-	numGoroutines := 20 // Número de goroutines para simular compras concorrentes
+	numGoroutines := 5 // Número de goroutines para simular compras concorrentes
 	var mu sync.Mutex
 	var maxDuration time.Duration
 

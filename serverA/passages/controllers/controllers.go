@@ -46,8 +46,8 @@ func Buy(context *gin.Context) {
 	if data.ServerId != nil {
 		serverId = *data.ServerId
 	}
-
-	externalClock := vectorClock.LocalClock
+	vectorClock.LocalClock.Increment() // Incrementa o relógio local
+	externalClock := vectorClock.LocalClock.Copy()
 	if data.Clock != nil {
 		externalClock = *data.Clock
 	}

@@ -16,6 +16,13 @@ func SetServerId(id int) {
 	ServerId = id
 }
 
+//Função para obter uma copia do relógio vetorial
+func (vc VectorClock) Copy() VectorClock {
+	copy := make(VectorClock, len(vc))
+	copy.Update(vc)
+	return copy
+}
+
 // Função para incrementar o relógio vetorial
 func (vc VectorClock) Increment() {
 	vc[ServerId]++

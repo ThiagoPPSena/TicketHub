@@ -54,9 +54,8 @@ func BuyLocal(routes []graphs.Route, externalServerId int, externalClock vectorC
 	queues.SolicitationsQueue <- &solicitation
 	// Recebe a resposta de efetuação de compra
 	confirmation := <-solicitation.ResponseCh
-	fmt.Println("Compra efetuada com sucesso:", confirmation)
 
-	return true, nil
+	return confirmation, nil
 }
 
 // Ainda implementar
@@ -76,8 +75,6 @@ func Buy(routes []graphs.Route, externalServerId int, externalClock vectorClock.
 	// Atualizando o relógio vetorial
 
 	vectorClock.LocalClock.Update(externalClock)
-	vectorClock.LocalClock.Increment() // Mudar para uma var global
-	fmt.Println("Relógio atualizado:", vectorClock.LocalClock)
 
 	// LEMBRAR DE ACRESCENTAR O SERVER ID e o CLOCK na estrutura de dados
 	if routesCompanyB != nil {
