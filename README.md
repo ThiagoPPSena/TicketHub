@@ -5,6 +5,7 @@ O desenvolvimento do **TicketHub** surge como uma solução inovadora para facil
 
 ## Metodologia
 
+![Exemplo de Imagem](images/Controle de Concorrência.jpg)
 ## Resultados e Discussões
 
 ## Conclusão
