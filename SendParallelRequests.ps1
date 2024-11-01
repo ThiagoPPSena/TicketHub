@@ -1,5 +1,5 @@
 # Número de requisições simultâneas que deseja enviar
-$numRequests = 20
+$numRequests = 100
 
 # URL do endpoint para onde as requisições serão enviadas
 $url = "http://localhost:8080/passages/buy"
