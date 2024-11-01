@@ -85,7 +85,7 @@ func Buy(routes []graphs.Route, externalServerId int, externalClock vectorClock.
 		dataB := collections.Body{
 			Routes:   routesCompanyB,
 			Clock:    &vectorClock.LocalClock,
-			ServerId: &externalServerId,
+			ServerId: &vectorClock.ServerId,
 		}
 		// Converte a estrutura para JSON
 		jsonRoutesB, err := json.Marshal(dataB)
@@ -106,7 +106,7 @@ func Buy(routes []graphs.Route, externalServerId int, externalClock vectorClock.
 		dataC := collections.Body{
 			Routes:   routesCompanyA,
 			Clock:    &vectorClock.LocalClock,
-			ServerId: &externalServerId,
+			ServerId: &vectorClock.ServerId,
 		}
 		// Converte a estrutura para JSON
 		jsonRoutesC, err := json.Marshal(dataC)

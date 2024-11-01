@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io"
 	"sharedPass/graphs"
 	"sharedPass/passages/routes"
 	"sharedPass/queues"
@@ -10,6 +11,11 @@ import (
 )
 
 func main() {
+	// Define a saída de logs para descartar
+	gin.DefaultWriter = io.Discard
+	// Seta o modo de execução do gin para release
+	gin.SetMode(gin.ReleaseMode)
+
 	// Cria um novo roteador do gin
 	router := gin.Default()
 	routes.RegisterRoutes(router)
