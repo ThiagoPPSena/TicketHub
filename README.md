@@ -10,8 +10,8 @@ O desenvolvimento do **TicketHub** surge como uma solução inovadora para facil
 ## Conclusão
 
 ## Equipe
-- **José Gabriel** - [Perfil GitHub](https://github.com/juserrrrr)
-- **Thiago Sena** - [Perfil GitHub](https://github.com/ThiagoPPSena)
+- [José Gabriel](https://github.com/juserrrrr)
+- [Thiago Sena](https://github.com/ThiagoPPSena)
  
 ## Referências
 
