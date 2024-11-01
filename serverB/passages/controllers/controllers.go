@@ -2,7 +2,9 @@ package passagesController
 
 import (
 	"net/http"
+	"sharedPass/collections"
 	passagesService "sharedPass/passages/services"
+	"sharedPass/vectorClock"
 
 	"github.com/gin-gonic/gin"
 )
@@ -31,7 +33,25 @@ func FindAllFlights(context *gin.Context) {
 }
 
 func Buy(context *gin.Context) {
-	confirmation, err := passagesService.Buy([]string{"Salvador", "Sao Paulo"})
+
+	var data collections.Body
+
+	// Faz o binding dos dados do corpo da requisição para a estrutura `BuyRequest`
+	if err := context.BindJSON(&data); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+
+	serverId := vectorClock.ServerId // Valor Padrão pro server A
+	if data.ServerId != nil {
+		serverId = *data.ServerId
+	}
+
+	externalClock := vectorClock.LocalClock
+	if data.Clock != nil {
+		externalClock = *data.Clock
+	}
+	confirmation, err := passagesService.Buy(data.Routes, serverId, externalClock)
 
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

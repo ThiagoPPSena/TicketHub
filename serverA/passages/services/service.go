@@ -5,7 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"sharedPass/collections"
 	"sharedPass/graphs"
+	"sharedPass/queues"
+	"sharedPass/vectorClock"
 	"sort"
 )
 
@@ -38,27 +41,58 @@ func GetAllRoutes(origin string, destination string) ([][]graphs.Route, error) {
 	return allPaths, nil
 }
 
+// Função para comprar passagem no proprio servidor
+func BuyLocal(routes []graphs.Route, externalServerId int, externalClock vectorClock.VectorClock) (bool, error) {
+	var solicitation queues.Solicitation
+	// Pega as rotas e o ID do servidor e passa para dentro da struct de solitação
+	solicitation.Clock = externalClock
+	solicitation.ServerID = externalServerId
+	solicitation.Routes = routes
+	// Criar o canal de resposta para receber a resposta de efetuação de compra
+	solicitation.ResponseCh = make(chan bool)
+	// Encaminha a solitação através do canal de comunicação queue
+	queues.SolicitationsQueue <- &solicitation
+	// Recebe a resposta de efetuação de compra
+	confirmation := <-solicitation.ResponseCh
+	fmt.Println("Compra efetuada com sucesso:", confirmation)
+
+	return true, nil
+}
+
 // Ainda implementar
-func Buy(routes []graphs.Route) (bool, error) {
-	//routesCompanyA := filterByCompany(routes, "A")
+func Buy(routes []graphs.Route, externalServerId int, externalClock vectorClock.VectorClock) (bool, error) {
+	routesCompanyA := filterByCompany(routes, "A")
 	routesCompanyB := filterByCompany(routes, "B")
 	routesCompanyC := filterByCompany(routes, "C")
 
-	// Converte a estrutura para JSON
-	jsonRoutesB, err := json.Marshal(routesCompanyB)
-	if err != nil {
-		fmt.Println("Erro ao converter para JSON:", err)
-		return false, err
+	//Chama a função que compra passagem local
+	if routesCompanyA != nil {
+		_, err := BuyLocal(routesCompanyA, externalServerId, externalClock)
+		if err != nil {
+			fmt.Println("Erro ao comprar passagem local:", err)
+			return false, err
+		}
 	}
+	// Atualizando o relógio vetorial
 
-	// Converte a estrutura para JSON
-	jsonRoutesC, err := json.Marshal(routesCompanyC)
-	if err != nil {
-		fmt.Println("Erro ao converter para JSON:", err)
-		return false, err
-	}
+	vectorClock.LocalClock.Update(externalClock)
+	vectorClock.LocalClock.Increment() // Mudar para uma var global
+	fmt.Println("Relógio atualizado:", vectorClock.LocalClock)
 
+	// LEMBRAR DE ACRESCENTAR O SERVER ID e o CLOCK na estrutura de dados
 	if routesCompanyB != nil {
+		// Coloca as rotas o id do servidor e o clock local em json
+		dataB := collections.Body{
+			Routes:   routesCompanyB,
+			Clock:    &vectorClock.LocalClock,
+			ServerId: &externalServerId,
+		}
+		// Converte a estrutura para JSON
+		jsonRoutesB, err := json.Marshal(dataB)
+		if err != nil {
+			fmt.Println("Erro ao converter para JSON:", err)
+			return false, err
+		}
 		respB, err := http.Post("http://localhost:8081/passages/buy", "application/json", bytes.NewBuffer(jsonRoutesB)) // Fazendo uma requisição ao servidor B
 		if err != nil {
 			fmt.Println("Erro:", err)
@@ -68,6 +102,18 @@ func Buy(routes []graphs.Route) (bool, error) {
 	}
 
 	if routesCompanyC != nil {
+		// Coloca as rotas o id do servidor e o clock local em json
+		dataC := collections.Body{
+			Routes:   routesCompanyC,
+			Clock:    &vectorClock.LocalClock,
+			ServerId: &externalServerId,
+		}
+		// Converte a estrutura para JSON
+		jsonRoutesC, err := json.Marshal(dataC)
+		if err != nil {
+			fmt.Println("Erro ao converter para JSON:", err)
+			return false, err
+		}
 		respC, err := http.Post("http://localhost:8082/passages/buy", "application/json", bytes.NewBuffer(jsonRoutesC)) // Fazendo uma requisição ao servidor C
 		if err != nil {
 			fmt.Println("Erro:", err)

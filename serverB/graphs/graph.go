@@ -34,21 +34,45 @@ func ReadRoutes() {
 	}
 }
 
+// // Método para encontrar todas as rotas disponíveis dada uma origem e destino
+// func FindRoutes(graph map[string][]Route, origin string, destination string, visited map[string]bool, path []string, allpaths *[][]string) {
+// 	visited[origin] = true
+// 	path = append(path, origin)
+
+// 	// Se a origem for igual ao destino, adiciona a rota encontrada
+// 	if origin == destination {
+// 		tempPath := make([]string, len(path)) // Faz uma cópia do caminho
+// 		copy(tempPath, path)
+// 		*allpaths = append(*allpaths, tempPath)
+// 	} else {
+// 		// Verifica vizinhos (rotas possíveis) e faz a busca recursiva
+// 		for _, neighbor := range graph[origin] {
+// 			if neighbor.Seats > 0 && !visited[neighbor.To] {
+// 				FindRoutes(graph, neighbor.To, destination, visited, path, allpaths)
+// 			}
+// 		}
+// 	}
+
+// 	// Marca como não visitado (permite outras rotas usarem essa cidade novamente)
+// 	visited[origin] = false
+// }
+
 // Método para encontrar todas as rotas disponíveis dada uma origem e destino
-func FindRoutes(graph map[string][]Route, origin string, destination string, visited map[string]bool, path []string, allpaths *[][]string) {
+func FindRoutes(graph map[string][]Route, origin string, destination string, visited map[string]bool, path []Route, allpaths *[][]Route) {
 	visited[origin] = true
-	path = append(path, origin)
 
 	// Se a origem for igual ao destino, adiciona a rota encontrada
 	if origin == destination {
-		tempPath := make([]string, len(path)) // Faz uma cópia do caminho
+		tempPath := make([]Route, len(path)) // Faz uma cópia do caminho
 		copy(tempPath, path)
 		*allpaths = append(*allpaths, tempPath)
 	} else {
 		// Verifica vizinhos (rotas possíveis) e faz a busca recursiva
 		for _, neighbor := range graph[origin] {
 			if neighbor.Seats > 0 && !visited[neighbor.To] {
-				FindRoutes(graph, neighbor.To, destination, visited, path, allpaths)
+				// Adiciona a rota ao caminho atual
+				newPath := append(path, neighbor)
+				FindRoutes(graph, neighbor.To, destination, visited, newPath, allpaths)
 			}
 		}
 	}

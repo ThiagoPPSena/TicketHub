@@ -21,8 +21,6 @@ func processQueue() {
 
 	for request := range SolicitationsQueue {
 		purchaseQueue = append(purchaseQueue, request)
-		// Printar quantidade de solicitações na solicintarionsQqueue
-		fmt.Printf("Quantidade de solicitações na fila: %d\n", len(SolicitationsQueue))
 
 		sort.Slice(purchaseQueue, func(i, j int) bool {
 			// Lógica de concorrencia e casualidade
