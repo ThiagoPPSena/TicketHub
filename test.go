@@ -4,18 +4,22 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
+	"net/url"
 	"sync"
 	"time"
 )
 
 // Estruturas para a requisição e resposta
 type Route struct {
-	From    string `json:"from"`
-	To      string `json:"to"`
-	Seats   int    `json:"seats"`
-	Company string `json:"company"`
+	From    string `json:"From"`
+	To      string `json:"To"`
+	Seats   int    `json:"Seats"`
+	Company string `json:"Company"`
+}
+
+type requestBuy struct {
+	Routes []Route `json:"Routes"`
 }
 
 type ResponseBuy struct {
@@ -23,18 +27,54 @@ type ResponseBuy struct {
 	Message string `json:"message"`
 }
 
+func craftGetURL(baseURL string, origem string, destino string) string {
+	// Configuração dos parâmetros de consulta
+	params := url.Values{}
+	params.Add("origem", origem)
+	params.Add("destino", destino)
+
+	// Construção da URL completa com os parâmetros de consulta
+	return fmt.Sprintf("%s?%s", baseURL, params.Encode())
+}
+
+func getRoutes(url string) ([][]Route, error) {
+	var routes [][]Route
+	resp, err := http.Get(url)
+	if err != nil {
+		return routes, err
+	}
+	defer resp.Body.Close()
+	err = json.NewDecoder(resp.Body).Decode(&routes)
+	if err != nil {
+		return routes, err
+	}
+	return routes, nil
+}
+
 func main() {
-	// Configuração dos servidores
+	urlGet := craftGetURL("http://localhost:8080/passages/routes", "ARACAJU", "PORTO VELHO")
 	serverURLs := []string{
-		"https://localhost:8080/passages/buy",
-		"https://localhost:8081/passages/buy",
-		"https://localhost:8082/passages/buy",
+		"http://localhost:8080/passages/buy",
+		"http://localhost:8081/passages/buy",
+		"http://localhost:8082/passages/buy",
 	}
 
-	// Exibe as rotas disponíveis (substitua isso pela lógica real de obtenção das rotas)
-	routes := []Route{
-		{From: "RECIFE", To: "SALVADOR", Seats: 1, Company: "A"},
-		// Adicione mais rotas conforme necessário
+	// Buscar as rotas via http e pegar a priemira rota
+	routes, err := getRoutes(urlGet)
+	if err != nil {
+		fmt.Println("Erro ao buscar as rotas:", err)
+		return
+	}
+	fmt.Println("Rotas disponíveis:", routes[0])
+	// Construir request do buy para enviar no post com a primeira rota
+	requestBuy := requestBuy{
+		Routes: routes[0],
+	}
+	// Serializar a rota para JSON
+	jsonRoute, err := json.Marshal(requestBuy)
+	if err != nil {
+		fmt.Println("Erro ao serializar a rota:", err)
+		return
 	}
 
 	var wg sync.WaitGroup
@@ -42,53 +82,42 @@ func main() {
 	var mu sync.Mutex
 	var maxDuration time.Duration
 
-	// Inicia as goroutines para compras concorrentes
-	for i := 0; i < numGoroutines; i++ {
+	// Cada servidor vai 20 de cada goroutine
+	for _, urlBuy := range serverURLs {
 		wg.Add(1)
-		go func() {
+		go func(urlBuy string) {
 			defer wg.Done()
-			for j := 0; j < 50; j++ { // Número de compras por goroutine
-				for _, url := range serverURLs {
-					// Simula a compra de uma passagem
-					route := routes[j%len(routes)] // Seleciona uma rota
-					requestBody, err := json.Marshal(route)
-					if err != nil {
-						fmt.Printf("Erro ao criar corpo da requisição: %v\n", err)
-						continue
+			for i := 0; i < numGoroutines; i++ {
+				wg.Add(1)
+				go func() {
+					defer wg.Done()
+					for j := 0; j < 1; j++ { // Número de compras por goroutine
+						start := time.Now()
+						resp, err := http.Post(urlBuy, "application/json", bytes.NewReader(jsonRoute))
+						if err != nil {
+							fmt.Println("Erro ao comprar passagem:", err)
+							return
+						}
+						defer resp.Body.Close()
+						fmt.Print(resp.StatusCode, " ")
+						var responseBuy bool
+						err = json.NewDecoder(resp.Body).Decode(&responseBuy)
+						if err != nil {
+							fmt.Println("Erro ao desserializar a resposta:", err)
+							return
+						}
+						// Atualiza o maior tempo de resposta
+						mu.Lock()
+						if time.Since(start) > maxDuration {
+							maxDuration = time.Since(start)
+						}
+						mu.Unlock()
 					}
-
-					start := time.Now()
-					resp, err := http.Post(url, "application/json", bytes.NewBuffer(requestBody))
-					if err != nil {
-						fmt.Printf("Erro ao fazer a requisição: %v\n", err)
-						continue
-					}
-					defer resp.Body.Close()
-
-					duration := time.Since(start)
-					mu.Lock()
-					if duration > maxDuration {
-						maxDuration = duration
-					}
-					mu.Unlock()
-
-					responseBody, err := ioutil.ReadAll(resp.Body)
-					if err != nil {
-						fmt.Printf("Erro ao ler a resposta: %v\n", err)
-						continue
-					}
-
-					var responseBuy ResponseBuy
-					if err := json.Unmarshal(responseBody, &responseBuy); err != nil {
-						fmt.Printf("Erro ao decodificar a resposta: %v\n", err)
-						continue
-					}
-					fmt.Print(responseBuy.Status, " ")
-				}
+				}()
 			}
-		}()
+		}(urlBuy)
 	}
 
 	wg.Wait() // Espera todas as goroutines terminarem
-	fmt.Printf("Todas as compras foram processadas. Maior tempo de resposta: %v\n", maxDuration)
+	fmt.Printf("\nTodas as compras foram processadas. Maior tempo de resposta: %v\n", maxDuration)
 }
