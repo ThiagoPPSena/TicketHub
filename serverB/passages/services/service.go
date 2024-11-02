@@ -1,7 +1,6 @@
 package passagesService
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -10,6 +9,7 @@ import (
 	"sharedPass/queues"
 	"sharedPass/vectorClock"
 	"sort"
+	"sync"
 )
 
 func GetAllRoutes(origin string, destination string) ([][]graphs.Route, error) {
@@ -58,8 +58,38 @@ func BuyLocal(routes []graphs.Route, externalServerId int, externalClock vectorC
 	return confirmation, nil
 }
 
+func sendBuyRequest(routes []graphs.Route, serverId int, clock vectorClock.VectorClock, port string, wg *sync.WaitGroup, channelBuy chan *queues.RequestBuy) (bool) {
+	defer wg.Done()
+
+	if routes == nil {
+		return false
+	}
+
+	data := collections.Body{
+		Routes:   routes,
+		Clock:    &clock,
+		ServerId: &serverId,
+	}
+	jsonRoutes, err := json.Marshal(data)
+	if err != nil {
+		fmt.Println("Erro ao converter para JSON:", err)
+		return false
+	}
+
+	request := queues.RequestBuy{
+		DataJson:   jsonRoutes,
+		Port:       port,
+		ResponseCh: make(chan bool),
+	}
+	channelBuy <- &request
+	confirmation := <-request.ResponseCh
+
+	return confirmation
+}
+
 // Ainda implementar
 func Buy(routes []graphs.Route, externalServerId int, externalClock vectorClock.VectorClock) (bool, error) {
+	var wg sync.WaitGroup
 	routesCompanyA := filterByCompany(routes, "A")
 	routesCompanyB := filterByCompany(routes, "B")
 	routesCompanyC := filterByCompany(routes, "C")
@@ -73,53 +103,17 @@ func Buy(routes []graphs.Route, externalServerId int, externalClock vectorClock.
 		}
 	}
 	// Atualizando o relógio vetorial
-
 	vectorClock.LocalClock.Update(externalClock)
 
+	wg.Add(2)
+	reponseOne := sendBuyRequest(routesCompanyA, externalServerId, externalClock, "8080", &wg, queues.RequestQueueOne)
+	responseTwo := sendBuyRequest(routesCompanyC, externalServerId, externalClock, "8082", &wg, queues.RequestQueueTwo)
+	wg.Wait()
 
-	// LEMBRAR DE ACRESCENTAR O SERVER ID e o CLOCK na estrutura de dados
-	fmt.Println("Clock Externo: ", externalClock)
-	if routesCompanyA != nil {
-		// Coloca as rotas o id do servidor e o clock local em json
-		dataB := collections.Body{
-			Routes:   routesCompanyA,
-			Clock:    &externalClock,
-			ServerId: &vectorClock.ServerId,
-		}
-		// Converte a estrutura para JSON
-		jsonRoutesB, err := json.Marshal(dataB)
-		if err != nil {
-			fmt.Println("Erro ao converter para JSON:", err)
-			return false, err
-		}
-		respB, err := http.Post("http://localhost:8080/passages/buy", "application/json", bytes.NewBuffer(jsonRoutesB)) // Fazendo uma requisição ao servidor B
-		if err != nil {
-			fmt.Println("Erro:", err)
-			return false, err
-		}
-		defer respB.Body.Close()
-	}
+	fmt.Println("Resposta 1:", reponseOne)
+	fmt.Println("Resposta 2:", responseTwo)
 
-	if routesCompanyC != nil {
-		// Coloca as rotas o id do servidor e o clock local em json
-		dataC := collections.Body{
-			Routes:   routesCompanyC,
-			Clock:    &externalClock,
-			ServerId: &vectorClock.ServerId,
-		}
-		// Converte a estrutura para JSON
-		jsonRoutesC, err := json.Marshal(dataC)
-		if err != nil {
-			fmt.Println("Erro ao converter para JSON:", err)
-			return false, err
-		}
-		respC, err := http.Post("http://localhost:8082/passages/buy", "application/json", bytes.NewBuffer(jsonRoutesC)) // Fazendo uma requisição ao servidor C
-		if err != nil {
-			fmt.Println("Erro:", err)
-			return false, nil
-		}
-		defer respC.Body.Close()
-	}
+
 
 	// Efetuar atualização de compra da companhia A aqui
 	return true, nil
@@ -136,7 +130,7 @@ func GetAllFlights() (map[string][]graphs.Route, error) {
 // Pega os vôos dos outros servers
 func getOtherFlights() (map[string][]graphs.Route, map[string][]graphs.Route, error) {
 
-	respB, err := http.Get("http://localhost:8081/passages/flights") // Fazendo uma requisição ao servidor B
+	respB, err := http.Get("http://localhost:8080/passages/flights") // Fazendo uma requisição ao servidor A
 	if err != nil {
 		fmt.Println("Erro:", err)
 		return nil, nil, err

@@ -24,6 +24,7 @@ func main() {
 	vectorClock.NewVectorClock(3)
 	// Iniciar a queue de solicitações
 	queues.StartProcessQueue()
+	queues.StartProcessRequestQueue()
 	// Seta o id do servidor
 	vectorClock.SetServerId(2)
 

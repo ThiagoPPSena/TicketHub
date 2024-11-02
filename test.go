@@ -52,7 +52,7 @@ func getRoutes(url string) ([][]Route, error) {
 }
 
 func main() {
-	urlGet := craftGetURL("http://localhost:8080/passages/routes", "BELO HORIZONTE", "SALVADOR")
+	urlGet := craftGetURL("http://localhost:8080/passages/routes", "ARACAJU", "PORTO VELHO") // ARACAJU PORTO VELHO // BELO HORIZONTE SALVADOR
 	serverURLs := []string{
 		"http://localhost:8080/passages/buy",
 		"http://localhost:8081/passages/buy",
@@ -78,7 +78,7 @@ func main() {
 	}
 
 	var wg sync.WaitGroup
-	numGoroutines := 5 // Número de goroutines para simular compras concorrentes
+	numGoroutines := 20 // Número de goroutines para simular compras concorrentes
 	var mu sync.Mutex
 	var maxDuration time.Duration
 
@@ -91,7 +91,7 @@ func main() {
 				wg.Add(1)
 				go func() {
 					defer wg.Done()
-					for j := 0; j < 1; j++ { // Número de compras por goroutine
+					for j := 0; j < 30; j++ { // Número de compras por goroutine
 						start := time.Now()
 						resp, err := http.Post(urlBuy, "application/json", bytes.NewReader(jsonRoute))
 						if err != nil {

@@ -1,11 +1,13 @@
 package queues
 
 import (
-    "fmt"
-    "sharedPass/graphs"
-    "sharedPass/vectorClock"
-    "sort"
-    "sync"
+	"bytes"
+	"fmt"
+	"net/http"
+	"sharedPass/graphs"
+	"sharedPass/vectorClock"
+	"sort"
+	"sync"
 )
 
 type Solicitation struct {
@@ -15,8 +17,40 @@ type Solicitation struct {
     ResponseCh chan bool
 }
 
+type RequestBuy struct {
+    DataJson []byte
+    Port string
+    ResponseCh chan bool
+}
+
 var SolicitationsQueue = make(chan *Solicitation)
-var mutex sync.Mutex // Declaração do mutex
+var RequestQueueOne = make(chan *RequestBuy)
+var RequestQueueTwo = make(chan *RequestBuy)
+var mutex sync.Mutex
+
+
+func sendRequest(port string, jsonRoutes []byte) (bool) {
+    resp, err := http.Post("http://localhost:"+port+"/passages/buy", "application/json", bytes.NewBuffer(jsonRoutes)) // Fazendo uma requisição ao servidor
+    if err != nil {
+        fmt.Println("Erro:", err)
+        return false
+    }
+    defer resp.Body.Close()
+    return true
+}
+
+func StartProcessRequestQueue() {
+    go func() {
+        for request := range RequestQueueOne {
+            request.ResponseCh <- sendRequest(request.Port, request.DataJson)
+        }
+    }()
+    go func() {
+        for request := range RequestQueueTwo {
+            request.ResponseCh <- sendRequest(request.Port, request.DataJson)
+        }
+    }()
+}
 
 func processQueue() {
     var purchaseQueue []*Solicitation
