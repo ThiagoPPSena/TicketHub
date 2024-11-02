@@ -78,11 +78,12 @@ func Buy(routes []graphs.Route, externalServerId int, externalClock vectorClock.
 
 
 	// LEMBRAR DE ACRESCENTAR O SERVER ID e o CLOCK na estrutura de dados
+	fmt.Println("Clock Externo: ", externalClock)
 	if routesCompanyA != nil {
 		// Coloca as rotas o id do servidor e o clock local em json
 		dataB := collections.Body{
 			Routes:   routesCompanyA,
-			Clock:    &vectorClock.LocalClock,
+			Clock:    &externalClock,
 			ServerId: &vectorClock.ServerId,
 		}
 		// Converte a estrutura para JSON
@@ -103,7 +104,7 @@ func Buy(routes []graphs.Route, externalServerId int, externalClock vectorClock.
 		// Coloca as rotas o id do servidor e o clock local em json
 		dataC := collections.Body{
 			Routes:   routesCompanyC,
-			Clock:    &vectorClock.LocalClock,
+			Clock:    &externalClock,
 			ServerId: &vectorClock.ServerId,
 		}
 		// Converte a estrutura para JSON

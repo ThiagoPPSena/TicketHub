@@ -49,6 +49,11 @@ func processQueue() {
         
                 return purchaseQueue[i].ServerID < purchaseQueue[j].ServerID
             })
+			//Printar a fila de solicitações
+			fmt.Println("Fila de solicitações: ", len(purchaseQueue))
+			for position, solicitation := range purchaseQueue {
+					fmt.Println("[", position, "]", "ServerID:", solicitation.ServerID, "Clock:", solicitation.Clock)
+				}
             mutex.Unlock() // Destrava o mutex após modificar a lista
         }
     }()
