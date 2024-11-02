@@ -58,12 +58,13 @@ func BuyLocal(routes []graphs.Route, externalServerId int, externalClock vectorC
 	return confirmation, nil
 }
 
-func sendBuyRequest(routes []graphs.Route, serverId int, clock vectorClock.VectorClock, port string, wg *sync.WaitGroup, channelBuy chan *queues.RequestBuy) (bool) {
+func sendBuyRequest(
+	routes []graphs.Route, serverId int, 
+	clock vectorClock.VectorClock, 
+	port string, wg *sync.WaitGroup, 
+	channelBuy chan *queues.RequestBuy, 
+	response chan bool) {
 	defer wg.Done()
-
-	if routes == nil {
-		return false
-	}
 
 	data := collections.Body{
 		Routes:   routes,
@@ -72,8 +73,8 @@ func sendBuyRequest(routes []graphs.Route, serverId int, clock vectorClock.Vecto
 	}
 	jsonRoutes, err := json.Marshal(data)
 	if err != nil {
-		fmt.Println("Erro ao converter para JSON:", err)
-		return false
+		response <- false
+		return 
 	}
 
 	request := queues.RequestBuy{
@@ -84,7 +85,7 @@ func sendBuyRequest(routes []graphs.Route, serverId int, clock vectorClock.Vecto
 	channelBuy <- &request
 	confirmation := <-request.ResponseCh
 
-	return confirmation
+	response <- confirmation
 }
 
 // Ainda implementar
@@ -104,16 +105,25 @@ func Buy(routes []graphs.Route, externalServerId int, externalClock vectorClock.
 	}
 	// Atualizando o relógio vetorial
 	vectorClock.LocalClock.Update(externalClock)
-
-	wg.Add(2)
-	reponseOne := sendBuyRequest(routesCompanyB, externalServerId, externalClock, "8081", &wg, queues.RequestQueueOne)
-	responseTwo := sendBuyRequest(routesCompanyC, externalServerId, externalClock, "8082", &wg, queues.RequestQueueTwo)
+	responseOne := make(chan bool, 1)
+	responseTwo := make(chan bool, 1)
+	if routesCompanyB != nil {
+		wg.Add(1)
+		go sendBuyRequest(routesCompanyB, externalServerId, externalClock, "8081", &wg, queues.RequestQueueOne, responseOne)
+		} else {
+		responseOne <- false
+	}
+	if routesCompanyC != nil {
+		wg.Add(1)
+		go sendBuyRequest(routesCompanyC, externalServerId, externalClock, "8082", &wg, queues.RequestQueueTwo, responseTwo)
+	} else {
+		responseTwo <- false
+	}
 	wg.Wait()
-
-	fmt.Println("Resposta 1:", reponseOne)
-	fmt.Println("Resposta 2:", responseTwo)
-
-
+	responseChOne := <-responseOne
+	responseChTwo := <-responseTwo
+	fmt.Println("Resposta 1:", responseChOne)
+	fmt.Println("Resposta 2:", responseChTwo)
 
 	// Efetuar atualização de compra da companhia A aqui
 	return true, nil

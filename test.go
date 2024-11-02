@@ -79,6 +79,7 @@ func main() {
 
 	var wg sync.WaitGroup
 	numGoroutines := 20 // Número de goroutines para simular compras concorrentes
+	numTry := 30       // Número de tentativas de compra por goroutine
 	var mu sync.Mutex
 	var maxDuration time.Duration
 
@@ -91,7 +92,7 @@ func main() {
 				wg.Add(1)
 				go func() {
 					defer wg.Done()
-					for j := 0; j < 30; j++ { // Número de compras por goroutine
+					for j := 0; j < numTry; j++ { // Número de compras por goroutine
 						start := time.Now()
 						resp, err := http.Post(urlBuy, "application/json", bytes.NewReader(jsonRoute))
 						if err != nil {
