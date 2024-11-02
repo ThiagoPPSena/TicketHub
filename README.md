@@ -7,7 +7,15 @@ O desenvolvimento do TicketHub surge como uma solução inovadora para facilitar
 
 ### Arquitetura
 ### Protocolo de comunicação
+A api desenvolvida para comunicação entre servidores e clientes utiliza métodos HTTP. Os métodos utilizados são GET para pegar os trechos disponíveis e o POST para requisição de compra.
+
+- http://{host}:{porta do servidor}/passages/routes
+- http://{host}:{porta do servidor}/passages/routes
+- http://{host}:{porta do servidor}/passages/routes
+  
 ### Roteamento
+Quando o usuário seleciona a origem e o destino em um servidor, este servidor realiza uma solicitação para obter todos os trechos disponíveis nos outros servidores por meio de um método HTTP GET. Em seguida, ele combina esses trechos com os próprios trechos da companhia. Dessa forma, é gerado um grafo abrangente que inclui todos os trechos de todas as companhias aéreas. O sistema, então, aplica um algoritmo de busca para identificar as rotas possíveis entre a origem e o destino selecionados.
+
 ### Concorrência
 Como estamos lidando com sistemas distribuidos e as requisições de compra de passagens podem chegar de qualquer um dos servidores, precisamos utilizar um método capaz "sincronizar" a ordem das solicitações e lidar com a concorrência. Desta forma foi escolhido o uso de relógios vetoriais. Relógios vetoriais são uma técnica de sincronização utilizada em sistemas distribuídos para ordenar eventos e tratar concorrência. Eles são uma evolução dos relógios lógicos propostos por Lamport (LAMPORT, 1978), mas com uma abordagem mais robusta para capturar relações de causalidade entre eventos de processos diferentes.
 
