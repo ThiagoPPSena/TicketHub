@@ -1,7 +1,7 @@
 # TicketHub
 
 ## Introdução
-O desenvolvimento do **TicketHub** surge como uma solução inovadora para facilitar a integração entre companhias aéreas no processo de reserva de passagens. Com o TicketHub, companhias conveniadas podem compartilhar trechos de rotas, permitindo que um cliente reserve passagens de diferentes empresas em uma única transação, como se estivesse utilizando um sistema centralizado. Através de uma API REST projetada especificamente para esse propósito, o TicketHub conecta os servidores das companhias, possibilitando que o cliente selecione trechos de diversas empresas em um só itinerário. Implementado em contêineres Docker para garantir escalabilidade e segurança, o sistema evita os riscos de uma solução centralizada e é projetado para operar com eficiência e resiliência.
+O desenvolvimento do TicketHub surge como uma solução inovadora para facilitar a integração entre companhias aéreas no processo de reserva de passagens, permitindo que um cliente reserve bilhetes de diferentes empresas em uma única transação e itinerário. Com o TicketHub, companhias conveniadas podem compartilhar trechos de rotas de maneira transparente, possibilitando a criação de itinerários de múltiplas empresas como se fossem parte de um sistema centralizado. Esse sistema é sustentado por uma API REST projetada especificamente para conectar os servidores das companhias aéreas, garantindo a comunicação segura e eficaz entre elas. Implementado em contêineres Docker, o TicketHub foi projetado com foco em escalabilidade e segurança, aproveitando as vantagens de sistemas distribuídos para evitar os riscos de uma abordagem centralizada. A utilização de relógios vetoriais garante a ordenação correta dos processos de compra, assegurando a consistência e a resolução de conflitos em um ambiente com múltiplos servidores interagindo simultaneamente
 
 ## Metodologia
 
@@ -30,6 +30,7 @@ O sistema utiliza relógios vetoriais para ordenar os processos na fila de compr
 ## Resultados e Discussões
 
 ## Conclusão
+O TicketHub provou ser uma solução eficiente e escalável para integrar companhias aéreas em um processo de venda de passagens que envolve múltiplos servidores e empresas. A implementação de relógios vetoriais se mostrou crucial para a ordenação correta dos eventos de compra, permitindo que as requisições sejam tratadas de maneira sincronizada, mesmo em um ambiente distribuído. Esse controle preciso de concorrência garante que os clientes possam realizar reservas de diferentes companhias em um único itinerário, melhorando a experiência de compra e ampliando as possibilidades de itinerário. Com isso, o TicketHub se posiciona como uma ferramenta eficaz para a gestão de reservas em um sistema distribuido, oferecendo uma infraestrutura capaz de crescer e se adaptar às demandas do setor aéreo.
 
 ## Equipe
 - [José Gabriel](https://github.com/juserrrrr)
