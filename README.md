@@ -6,12 +6,14 @@ O desenvolvimento do TicketHub surge como uma solução inovadora para facilitar
 ## Metodologia
 
 ### Arquitetura
+Cada servidor mantém uma arquitetura bem modularizada. O diretório de colle
 ### Protocolo de comunicação
 A api desenvolvida para comunicação entre servidores e clientes utiliza métodos HTTP. Os métodos utilizados são GET para pegar os trechos disponíveis e o POST para requisição de compra.
 
+#### Rotas
 - http://{host}:{porta do servidor}/passages/routes
-- http://{host}:{porta do servidor}/passages/routes
-- http://{host}:{porta do servidor}/passages/routes
+- http://{host}:{porta do servidor}/passages/flights
+- http://{host}:{porta do servidor}/passages/buy
   
 ### Roteamento
 Quando o usuário seleciona a origem e o destino em um servidor, este servidor realiza uma solicitação para obter todos os trechos disponíveis nos outros servidores por meio de um método HTTP GET. Em seguida, ele combina esses trechos com os próprios trechos da companhia. Dessa forma, é gerado um grafo abrangente que inclui todos os trechos de todas as companhias aéreas. O sistema, então, aplica um algoritmo de busca para identificar as rotas possíveis entre a origem e o destino selecionados.
