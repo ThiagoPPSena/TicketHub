@@ -6,7 +6,12 @@ O desenvolvimento do TicketHub surge como uma solução inovadora para facilitar
 ## Metodologia
 
 ### Arquitetura
-Cada servidor mantém uma arquitetura bem modularizada. O diretório de colle
+Cada servidor possui uma arquitetura bem modularizada e semelhante. O diretório collections armazena as interfaces utilizadas por outros módulos do sistema. O diretório files contém os arquivos JSON que garantem a persistência dos dados. O módulo graphs é responsável pela leitura dos trechos aéreos nos arquivos JSON e pelo cálculo das rotas possíveis entre cidades. O módulo queues gerencia a fila de solicitações de compras do servidor. O módulo vectorClock cuida da concorrência nas compras em um sistema distribuído, utilizando relógios vetoriais (tópico que será abordado na seção de concorrência).
+
+Por fim, o módulo passages é dividido em três camadas. A camada routes é responsável por estabelecer as rotas HTTP para a comunicação entre dois servidores ou entre o servidor e o cliente. A camada controllers intercepta as requisições, realiza o tratamento adequado e as encaminha para a camada inferior, chamada services. Esta última, services, cuida do processamento dos dados e retorna as respostas para as camadas superiores.
+
+![arquitetura](https://github.com/user-attachments/assets/f9c9fd65-97b8-4b8a-b818-7eee5d3f9f74)
+
 ### Protocolo de comunicação
 A api desenvolvida para comunicação entre servidores e clientes utiliza métodos HTTP. Os métodos utilizados são GET para pegar os trechos disponíveis e o POST para requisição de compra.
 
