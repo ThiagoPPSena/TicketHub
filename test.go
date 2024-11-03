@@ -78,8 +78,8 @@ func main() {
 	}
 
 	var wg sync.WaitGroup
-	numGoroutines := 20 // Número de goroutines para simular compras concorrentes
-	numTry := 30       // Número de tentativas de compra por goroutine
+	numGoroutines := 50 // Número de goroutines para simular compras concorrentes
+	numTry := 50       // Número de tentativas de compra por goroutine
 	var mu sync.Mutex
 	var maxDuration time.Duration
 
