@@ -59,10 +59,10 @@ func BuyLocal(routes []graphs.Route, externalServerId int, externalClock vectorC
 }
 
 func sendBuyRequest(
-	routes []graphs.Route, serverId int, 
-	clock vectorClock.VectorClock, 
-	port string, wg *sync.WaitGroup, 
-	channelBuy chan *queues.RequestBuy, 
+	routes []graphs.Route, serverId int,
+	clock vectorClock.VectorClock,
+	port string, wg *sync.WaitGroup,
+	channelBuy chan *queues.RequestBuy,
 	response chan bool) {
 	defer wg.Done()
 
@@ -74,7 +74,7 @@ func sendBuyRequest(
 	jsonRoutes, err := json.Marshal(data)
 	if err != nil {
 		response <- false
-		return 
+		return
 	}
 
 	request := queues.RequestBuy{
@@ -110,7 +110,7 @@ func Buy(routes []graphs.Route, externalServerId int, externalClock vectorClock.
 	if routesCompanyB != nil {
 		wg.Add(1)
 		go sendBuyRequest(routesCompanyB, externalServerId, externalClock, "8081", &wg, queues.RequestQueueOne, responseOne)
-		} else {
+	} else {
 		responseOne <- false
 	}
 	if routesCompanyC != nil {
