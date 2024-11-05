@@ -34,7 +34,7 @@ func main() {
 	queues.StartProcessQueue()
 	queues.StartProcessRequestQueue()
 	// Seta o id do servidor
-	vectorClock.SetServerId(1)
+	vectorClock.SetServerId(0)
 
 	// Roda o server
 	graphs.ReadRoutes() // Carregando o gráfico na memória

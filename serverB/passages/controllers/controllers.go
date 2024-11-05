@@ -51,9 +51,9 @@ func Buy(context *gin.Context) {
 	if data.Clock != nil {
 		externalClock = *data.Clock
 	}
-	_, err := passagesService.Buy(data.Routes, serverId, externalClock)
+	respBuy, err := passagesService.Buy(data.Routes, serverId, externalClock)
 
-	if err != nil {
+	if err != nil || !respBuy {
 		context.JSON(http.StatusConflict, gin.H{"error": "Passagem já reservada ou esgotada"})
 		return
 	}
@@ -80,9 +80,9 @@ func RollBack(context *gin.Context){
 	if data.Clock != nil {
 		externalClock = *data.Clock
 	}
-	_, err := passagesService.RollBack(data.Routes, serverId, externalClock)
+	respRollBack, err := passagesService.RollBack(data.Routes, serverId, externalClock)
 
-	if err != nil {
+	if err != nil || !respRollBack {
 		context.JSON(http.StatusConflict, gin.H{"error": "Passagem já reservada ou esgotada"})
 		return
 	}

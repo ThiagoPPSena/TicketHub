@@ -36,7 +36,8 @@ func sendRequest(port string, jsonRoutes []byte) bool {
 		return false
 	}
 	defer resp.Body.Close()
-	return true
+	statusCode := resp.StatusCode
+	return statusCode == 201
 }
 
 func StartProcessRequestQueue() {
