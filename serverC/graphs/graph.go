@@ -84,6 +84,21 @@ func BuySeats(routesToBuy []Route) bool {
 	return true
 }
 
+// Função para restaurar o número de assentos em caso de rollback
+func RollBack(routesToRollback []Route) (bool) {
+	for _, route := range routesToRollback {
+		if routes, ok := Graph[route.From]; ok {
+			for i, r := range routes {
+				if r.To == route.To {
+					Graph[route.From][i].Seats++ // Incrementa os assentos de volta
+				}
+			}
+		}
+	}
+
+	return true
+}
+
 // Função para salvar o grafo atualizado no arquivo JSON
 func SaveSeats() {
 	file, err := os.OpenFile("./files/routes.json", os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)

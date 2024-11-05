@@ -6,8 +6,10 @@ import (
 	"sharedPass/passages/routes"
 	"sharedPass/queues"
 	"sharedPass/vectorClock"
-
+	"os"
+	"log"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -20,6 +22,12 @@ func main() {
 	router := gin.Default()
 	routes.RegisterRoutes(router)
 
+	// Carregar a .env
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Erro ao carregar o arquivo .env")
+	}
+
 	// Iniciar o relogio vetorial local
 	vectorClock.NewVectorClock(3)
 	// Iniciar a queue de solicitações
@@ -30,5 +38,5 @@ func main() {
 
 	// Roda o server
 	graphs.ReadRoutes() // Carregando o gráfico na memória
-	router.Run(":8080") // Roda na porta 8080
+	router.Run(":"+ os.Getenv("LOCAL_PORT")) // Roda na porta 8080
 }

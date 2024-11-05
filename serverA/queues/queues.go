@@ -13,6 +13,7 @@ import (
 type Solicitation struct {
 	Clock      vectorClock.VectorClock
 	ServerID   int
+	IsBuy      bool
 	Routes     []graphs.Route
 	ResponseCh chan bool
 }
@@ -29,7 +30,7 @@ var RequestQueueTwo = make(chan *RequestBuy)
 var mutex sync.Mutex
 
 func sendRequest(port string, jsonRoutes []byte) bool {
-	resp, err := http.Post("http://localhost:"+port+"/passages/buy", "application/json", bytes.NewBuffer(jsonRoutes)) // Fazendo uma requisição ao servidor
+	resp, err := http.Post("http://localhost:"+port+"/passages/buy", "application/json", bytes.NewBuffer(jsonRoutes))
 	if err != nil {
 		fmt.Println("Erro:", err)
 		return false
@@ -56,8 +57,8 @@ func processQueue() {
 
 	go func() {
 		for request := range SolicitationsQueue {
-			mutex.Lock()                                   // Trava o mutex antes de modificar a lista
-			purchaseQueue = append(purchaseQueue, request) // Adiciona cada solicitação à fila slice
+			mutex.Lock()
+			purchaseQueue = append(purchaseQueue, request)
 			sort.Slice(purchaseQueue, func(i, j int) bool {
 				clockI := purchaseQueue[i].Clock
 				clockJ := purchaseQueue[j].Clock
@@ -72,7 +73,6 @@ func processQueue() {
 						isGreater = true
 					}
 				}
-				// Se o relógio de i for menor que o de j, retorna true
 				if isLess && !isGreater {
 					return true
 				} else if !isLess && isGreater {
@@ -81,37 +81,35 @@ func processQueue() {
 
 				return purchaseQueue[i].ServerID < purchaseQueue[j].ServerID
 			})
-			//Printar a fila de solicitações
 			fmt.Println("Fila de solicitações: ", len(purchaseQueue))
 			for position, solicitation := range purchaseQueue {
 				fmt.Println("[", position, "]", "ServerID:", solicitation.ServerID, "Clock:", solicitation.Clock)
 			}
-			mutex.Unlock() // Destrava o mutex após modificar a lista
+			mutex.Unlock()
 		}
 	}()
 
-	// Processamento das solicitações na fila ilimitada
 	for {
 		if len(purchaseQueue) > 0 {
-			mutex.Lock() // Trava o mutex antes de acessar a lista
-			// Processa a solicitação mais antiga
+			mutex.Lock()
 			nextRequest := purchaseQueue[0]
-
 			routes := nextRequest.Routes
-			// Decrementa o número de assentos
-			effectuedPurchase := graphs.BuySeats(routes)
-			fmt.Println(effectuedPurchase)
+			isBuy := nextRequest.IsBuy
 
-			// Salvando a compra e atualizando grafo da memória
+			response := false
+			if isBuy {
+				response = graphs.BuySeats(routes)
+			} else {
+				response = graphs.RollBack(routes)
+			}
+
+			nextRequest.ResponseCh <- response
+
 			graphs.SaveSeats()
-			graphs.ReadRoutes() // Carregando o gráfico na memória
+			graphs.ReadRoutes()
 
-			// Retornando resposta de confirmação de compra
-			nextRequest.ResponseCh <- effectuedPurchase
-
-			// Remove a solicitação processada da fila
 			purchaseQueue = purchaseQueue[1:]
-			mutex.Unlock() // Destrava o mutex após modificar a lista
+			mutex.Unlock()
 		}
 	}
 }

@@ -46,17 +46,47 @@ func Buy(context *gin.Context) {
 	if data.ServerId != nil {
 		serverId = *data.ServerId
 	}
-
 	vectorClock.LocalClock.Increment() // Incrementa o relógio local
 	externalClock := vectorClock.LocalClock.Copy()
 	if data.Clock != nil {
 		externalClock = *data.Clock
 	}
-	confirmation, err := passagesService.Buy(data.Routes, serverId, externalClock)
+	_, err := passagesService.Buy(data.Routes, serverId, externalClock)
 
 	if err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		context.JSON(http.StatusConflict, gin.H{"error": "Passagem já reservada ou esgotada"})
 		return
 	}
-	context.JSON(http.StatusOK, confirmation)
+	context.JSON(http.StatusCreated, gin.H{
+		"message": "Compra realizada com sucesso!",
+	})
+}
+
+func RollBack(context *gin.Context){
+	var data collections.Body
+
+	// Faz o binding dos dados do corpo da requisição para a estrutura `BuyRequest`
+	if err := context.BindJSON(&data); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+
+	serverId := vectorClock.ServerId // Valor Padrão pro server A
+	if data.ServerId != nil {
+		serverId = *data.ServerId
+	}
+	vectorClock.LocalClock.Increment() // Incrementa o relógio local
+	externalClock := vectorClock.LocalClock.Copy()
+	if data.Clock != nil {
+		externalClock = *data.Clock
+	}
+	_, err := passagesService.RollBack(data.Routes, serverId, externalClock)
+
+	if err != nil {
+		context.JSON(http.StatusConflict, gin.H{"error": "Passagem já reservada ou esgotada"})
+		return
+	}
+	context.JSON(http.StatusCreated, gin.H{
+		"message": "Compra realizada com sucesso!",
+	})
 }
