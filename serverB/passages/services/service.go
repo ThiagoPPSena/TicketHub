@@ -115,7 +115,7 @@ func Buy(routes []graphs.Route, externalServerId int, externalClock vectorClock.
 		}
 	}
 
-	if responseLocal {
+	if responseLocal || routesCompanyOne != nil || routesCompanyTwo != nil {
 
 		responseOne := make(chan bool, 1)
 		responseTwo := make(chan bool, 1)
@@ -143,7 +143,9 @@ func Buy(routes []graphs.Route, externalServerId int, externalClock vectorClock.
 				Clock:    &externalClock,
 				ServerId: &vectorClock.ServerId,
 			}
-			SolicitationLocal(routesCompanylocal, externalServerId, externalClock, false)
+			if responseLocal { // Rollback local
+				SolicitationLocal(routesCompanylocal, externalServerId, externalClock, false)
+			}
 			if !responseChOne && responseChTwo {
 				data.Routes = routesCompanyTwo
 				jsonRoutesTwo, _ := json.Marshal(data)
