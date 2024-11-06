@@ -15,7 +15,7 @@
     {
       "From": "BELO HORIZONTE",
       "To": "CURITIBA",
-      "Seats": 0,
+      "Seats": 149,
       "Company": "B"
     }
   ],
@@ -23,7 +23,7 @@
     {
       "From": "BRASILIA",
       "To": "GOIANIA",
-      "Seats": 73,
+      "Seats": 0,
       "Company": "B"
     },
     {
@@ -71,7 +71,7 @@
     {
       "From": "MANAUS",
       "To": "PORTO VELHO",
-      "Seats": 76,
+      "Seats": 77,
       "Company": "B"
     }
   ]

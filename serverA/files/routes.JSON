@@ -107,7 +107,7 @@
     {
       "From": "NATAL",
       "To": "SALVADOR",
-      "Seats": 0,
+      "Seats": 149,
       "Company": "A"
     },
     {
@@ -121,7 +121,7 @@
     {
       "From": "RECIFE",
       "To": "SAO PAULO",
-      "Seats": 0,
+      "Seats": 149,
       "Company": "A"
     },
     {
@@ -191,7 +191,7 @@
     {
       "From": "SALVADOR",
       "To": "BELO HORIZONTE",
-      "Seats": 0,
+      "Seats": 149,
       "Company": "A"
     }
   ],
@@ -217,7 +217,7 @@
     {
       "From": "SAO PAULO",
       "To": "NATAL",
-      "Seats": 0,
+      "Seats": 149,
       "Company": "A"
     }
   ]

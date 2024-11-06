@@ -105,6 +105,7 @@ func main() {
 	numTry := 15               // Número de tentativas de compra por goroutine
 	var mu sync.Mutex
 	var maxDuration time.Duration
+	count := make([]int, len(serverURLs))
 
 	// Cada servidor vai 20 de cada goroutine
 	for serverIndex, urlBuy := range serverURLs {
@@ -117,6 +118,7 @@ func main() {
 				startWg.Wait()                // Aguarda até que todas as goroutines estejam prontas para começar
 				for j := 0; j < numTry; j++ { // Número de compras por goroutine
 					start := time.Now()
+					count[serverIndex]++
 					resp, err := http.Post(urlBuy, "application/json", bytes.NewReader(allJsonRoutes[serverIndex]))
 					if err != nil {
 						fmt.Println("Erro ao comprar passagem:", err)
@@ -144,4 +146,5 @@ func main() {
 	startWg.Wait() // Aguarda até que todas as goroutines estejam prontas para começar
 	wg.Wait()      // Espera todas as goroutines terminarem
 	fmt.Printf("\nTodas as compras foram processadas. Maior tempo de resposta: %v\n", maxDuration)
+	fmt.Println("Compras por servidor:", count)
 }
