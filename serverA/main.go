@@ -2,12 +2,14 @@ package main
 
 import (
 	"io"
+	"log"
+	"os"
 	"sharedPass/graphs"
 	"sharedPass/passages/routes"
 	"sharedPass/queues"
 	"sharedPass/vectorClock"
-	"os"
-	"log"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -34,9 +36,13 @@ func main() {
 	queues.StartProcessQueue()
 	queues.StartProcessRequestQueue()
 	// Seta o id do servidor
-	vectorClock.SetServerId(0)
+	serverID, err := strconv.Atoi(os.Getenv("SERVER_ID"))
+	if err != nil {
+		log.Fatal("Invalid SERVER_ID: ", err)
+	}
+	vectorClock.SetServerId(serverID)
 
 	// Roda o server
-	graphs.ReadRoutes() // Carregando o gráfico na memória
-	router.Run(":"+ os.Getenv("LOCAL_PORT")) // Roda na porta 8080
+	graphs.ReadRoutes()                       // Carregando o gráfico na memória
+	router.Run(":" + os.Getenv("LOCAL_PORT")) // Roda na porta 8080
 }
