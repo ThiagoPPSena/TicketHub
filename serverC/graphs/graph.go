@@ -42,7 +42,6 @@ func checkAvailability(routesToCheck []Route) bool {
 			found := false
 			for _, r := range routes {
 				if r.To == route.To && r.Seats > 0 {
-					fmt.Println(r.Seats)
 					found = true
 					break
 				}

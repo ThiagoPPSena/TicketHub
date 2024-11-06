@@ -82,10 +82,10 @@ func processQueue() {
 
 				return purchaseQueue[i].ServerID < purchaseQueue[j].ServerID
 			})
-			fmt.Println("Fila de solicitações: ", len(purchaseQueue))
-			for position, solicitation := range purchaseQueue {
-				fmt.Println("[", position, "]", "ServerID:", solicitation.ServerID, "Clock:", solicitation.Clock)
-			}
+			// fmt.Println("Fila de solicitações: ", len(purchaseQueue))
+			// for position, solicitation := range purchaseQueue {
+			// 	fmt.Println("[", position, "]", "ServerID:", solicitation.ServerID, "Clock:", solicitation.Clock)
+			// }
 			mutex.Unlock()
 		}
 	}()
