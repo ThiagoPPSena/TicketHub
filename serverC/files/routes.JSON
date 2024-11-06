@@ -1,78 +1,78 @@
 {
-  "SALVADOR": [
-      {
-          "From": "SALVADOR",
-          "To": "RECIFE",
-          "Seats": 300,
-          "Company": "C"
-      },
-      {
-          "From": "SALVADOR",
-          "To": "BRASILIA",
-          "Seats": 250,
-          "Company": "C"
-      }
-  ],
-  "PORTO ALEGRE": [
-      {
-          "From": "PORTO ALEGRE",
-          "To": "CURITIBA",
-          "Seats": 200,
-          "Company": "C"
-      },
-      {
-          "From": "PORTO ALEGRE",
-          "To": "FLORIANOPOLIS",
-          "Seats": 150,
-          "Company": "C"
-      }
-  ],
-  "RECIFE": [
-      {
-          "From": "RECIFE",
-          "To": "FORTALEZA",
-          "Seats": 300,
-          "Company": "C"
-      },
-      {
-          "From": "RECIFE",
-          "To": "NATAL",
-          "Seats": 400,
-          "Company": "C"
-      }
-  ],
-  "RIO DE JANEIRO": [
-      {
-          "From": "RIO DE JANEIRO",
-          "To": "VITORIA",
-          "Seats": 250,
-          "Company": "C"
-      },
-      {
-          "From": "RIO DE JANEIRO",
-          "To": "SAO PAULO",
-          "Seats": 350,
-          "Company": "C"
-      },
-      {
-        "From": "RIO DE JANEIRO",
-        "To": "CURITIBA",
-        "Seats": 250,
-        "Company": "C"
+  "GOIANIA": [
+    {
+      "From": "GOIANIA",
+      "To": "BRASILIA",
+      "Seats": 100,
+      "Company": "C"
+    },
+    {
+      "From": "GOIANIA",
+      "To": "MANAUS",
+      "Seats": 0,
+      "Company": "C"
     }
   ],
-  "GOIANIA": [
-      {
-          "From": "GOIANIA",
-          "To": "BRASILIA",
-          "Seats": 100,
-          "Company": "C"
-      },
-      {
-          "From": "GOIANIA",
-          "To": "MANAUS",
-          "Seats": 200,
-          "Company": "C"
-      }
+  "PORTO ALEGRE": [
+    {
+      "From": "PORTO ALEGRE",
+      "To": "CURITIBA",
+      "Seats": 200,
+      "Company": "C"
+    },
+    {
+      "From": "PORTO ALEGRE",
+      "To": "FLORIANOPOLIS",
+      "Seats": 150,
+      "Company": "C"
+    }
+  ],
+  "RECIFE": [
+    {
+      "From": "RECIFE",
+      "To": "FORTALEZA",
+      "Seats": 300,
+      "Company": "C"
+    },
+    {
+      "From": "RECIFE",
+      "To": "NATAL",
+      "Seats": 400,
+      "Company": "C"
+    }
+  ],
+  "RIO DE JANEIRO": [
+    {
+      "From": "RIO DE JANEIRO",
+      "To": "VITORIA",
+      "Seats": 250,
+      "Company": "C"
+    },
+    {
+      "From": "RIO DE JANEIRO",
+      "To": "SAO PAULO",
+      "Seats": 350,
+      "Company": "C"
+    },
+    {
+      "From": "RIO DE JANEIRO",
+      "To": "CURITIBA",
+      "Seats": 250,
+      "Company": "C"
+    }
+  ],
+  "SALVADOR": [
+    {
+      "From": "SALVADOR",
+      "To": "RECIFE",
+      "Seats": 300,
+      "Company": "C"
+    },
+    {
+      "From": "SALVADOR",
+      "To": "BRASILIA",
+      "Seats": 149,
+      "Company": "C"
+    }
   ]
 }

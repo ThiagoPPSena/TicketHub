@@ -1,78 +1,78 @@
 {
-  "MANAUS": [
-      {
-          "From": "MANAUS",
-          "To": "RIO BRANCO",
-          "Seats": 400,
-          "Company": "B"
-      },
-      {
-          "From": "MANAUS",
-          "To": "PORTO VELHO",
-          "Seats": 300,
-          "Company": "B"
-      }
+  "BELO HORIZONTE": [
+    {
+      "From": "BELO HORIZONTE",
+      "To": "VITORIA",
+      "Seats": 300,
+      "Company": "B"
+    },
+    {
+      "From": "BELO HORIZONTE",
+      "To": "RIO DE JANEIRO",
+      "Seats": 250,
+      "Company": "B"
+    },
+    {
+      "From": "BELO HORIZONTE",
+      "To": "CURITIBA",
+      "Seats": 0,
+      "Company": "B"
+    }
+  ],
+  "BRASILIA": [
+    {
+      "From": "BRASILIA",
+      "To": "GOIANIA",
+      "Seats": 73,
+      "Company": "B"
+    },
+    {
+      "From": "BRASILIA",
+      "To": "SALVADOR",
+      "Seats": 250,
+      "Company": "B"
+    }
   ],
   "CURITIBA": [
-      {
-          "From": "CURITIBA",
-          "To": "FLORIANOPOLIS",
-          "Seats": 200,
-          "Company": "B"
-      },
-      {
-          "From": "CURITIBA",
-          "To": "SAO PAULO",
-          "Seats": 350,
-          "Company": "B"
-      }
-  ],
-  "BELO HORIZONTE": [
-      {
-          "From": "BELO HORIZONTE",
-          "To": "VITORIA",
-          "Seats": 300,
-          "Company": "B"
-      },
-      {
-          "From": "BELO HORIZONTE",
-          "To": "RIO DE JANEIRO",
-          "Seats": 250,
-          "Company": "B"
-      },
-      {
-        "From": "BELO HORIZONTE",
-        "To": "CURITIBA",
-        "Seats": 250,
-        "Company": "B"
+    {
+      "From": "CURITIBA",
+      "To": "FLORIANOPOLIS",
+      "Seats": 200,
+      "Company": "B"
+    },
+    {
+      "From": "CURITIBA",
+      "To": "SAO PAULO",
+      "Seats": 350,
+      "Company": "B"
     }
   ],
   "FORTALEZA": [
-      {
-          "From": "FORTALEZA",
-          "To": "NATAL",
-          "Seats": 200,
-          "Company": "B"
-      },
-      {
-          "From": "FORTALEZA",
-          "To": "SAO PAULO",
-          "Seats": 150,
-          "Company": "B"
-      }
+    {
+      "From": "FORTALEZA",
+      "To": "NATAL",
+      "Seats": 200,
+      "Company": "B"
+    },
+    {
+      "From": "FORTALEZA",
+      "To": "SAO PAULO",
+      "Seats": 150,
+      "Company": "B"
+    }
   ],
-  "BRASILIA": [
-      {
-          "From": "BRASILIA",
-          "To": "GOIANIA",
-          "Seats": 500,
-          "Company": "B"
-      },
-      {
-          "From": "BRASILIA",
-          "To": "SALVADOR",
-          "Seats": 250,
-          "Company": "B"
-      }
+  "MANAUS": [
+    {
+      "From": "MANAUS",
+      "To": "RIO BRANCO",
+      "Seats": 400,
+      "Company": "B"
+    },
+    {
+      "From": "MANAUS",
+      "To": "PORTO VELHO",
+      "Seats": 76,
+      "Company": "B"
+    }
   ]
 }
