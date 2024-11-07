@@ -9,7 +9,7 @@
     {
       "From": "GOIANIA",
       "To": "MANAUS",
-      "Seats": 0,
+      "Seats": 149,
       "Company": "C"
     }
   ],
@@ -71,7 +71,7 @@
     {
       "From": "SALVADOR",
       "To": "BRASILIA",
-      "Seats": 77,
+      "Seats": 149,
       "Company": "C"
     }
   ]
