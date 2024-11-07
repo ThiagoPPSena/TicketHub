@@ -9,6 +9,6 @@ RUN go mod download
 # Build the server
 RUN go build -o /main
 # expose the port
-EXPOSE 8080
+EXPOSE 8082
 
 CMD [ "/main" ]
