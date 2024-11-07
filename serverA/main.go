@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -43,6 +44,8 @@ func main() {
 	vectorClock.SetServerId(serverID)
 
 	// Roda o server
-	graphs.ReadRoutes()                       // Carregando o gráfico na memória
+	fmt.Println("AAAAAAAAAAA")
+	graphs.ReadRoutes()
+	fmt.Println("BBBBBBBBB")                // Carregando o gráfico na memória
 	router.Run(":" + os.Getenv("LOCAL_PORT")) // Roda na porta 8080
 }

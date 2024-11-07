@@ -19,7 +19,7 @@ var Graph map[string][]Route
 // Função para ler as rotas do arquivo JSON
 func ReadRoutes() {
 	// Abre o arquivo JSON
-	file, err := os.Open("./files/routes.json")
+	file, err := os.Open("./files/routes.JSON")
 	if err != nil {
 		fmt.Println("Erro ao abrir o arquivo:", err)
 		return
@@ -84,7 +84,7 @@ func BuySeats(routesToBuy []Route) bool {
 }
 
 // Função para restaurar o número de assentos em caso de rollback
-func RollBack(routesToRollback []Route) (bool) {
+func RollBack(routesToRollback []Route) bool {
 	for _, route := range routesToRollback {
 		if routes, ok := Graph[route.From]; ok {
 			for i, r := range routes {
@@ -100,7 +100,7 @@ func RollBack(routesToRollback []Route) (bool) {
 
 // Função para salvar o grafo atualizado no arquivo JSON
 func SaveSeats() {
-	file, err := os.OpenFile("./files/routes.json", os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
+	file, err := os.OpenFile("./files/routes.JSON", os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
 	if err != nil {
 		fmt.Println("Erro ao abrir o arquivo:", err)
 		return

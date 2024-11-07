@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -15,6 +16,7 @@ import (
 )
 
 func main() {
+	fmt.Println("AAAAAAAAAAA")
 	// Define a saída de logs para descartar
 	gin.DefaultWriter = io.Discard
 	// Seta o modo de execução do gin para release
@@ -44,5 +46,6 @@ func main() {
 
 	// Roda o server
 	graphs.ReadRoutes()                       // Carregando o gráfico na memória
+	fmt.Println("BBBBBBBBBBBB")
 	router.Run(":" + os.Getenv("LOCAL_PORT")) // Roda na porta 8080
 }
