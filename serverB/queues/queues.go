@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"net/http"
-	"os"
 	"sharedPass/graphs"
 	"sharedPass/vectorClock"
 	"sort"
@@ -20,9 +19,10 @@ type Solicitation struct {
 }
 
 type RequestBuy struct {
-	DataJson   []byte
-	Port       string
-	ResponseCh chan bool
+	DataJson     []byte
+	ServerAddres string
+	Port         string
+	ResponseCh   chan bool
 }
 
 var SolicitationsQueue = make(chan *Solicitation)
@@ -30,8 +30,8 @@ var RequestQueueOne = make(chan *RequestBuy)
 var RequestQueueTwo = make(chan *RequestBuy)
 var mutex sync.Mutex
 
-func sendRequest(port string, jsonRoutes []byte) bool {
-	resp, err := http.Post("http://"+os.Getenv("SERVER_ADDRESS")+":"+port+"/passages/buy", "application/json", bytes.NewBuffer(jsonRoutes))
+func sendRequest(serverAddres string, port string, jsonRoutes []byte) bool {
+	resp, err := http.Post("http://"+serverAddres+":"+port+"/passages/buy", "application/json", bytes.NewBuffer(jsonRoutes))
 	if err != nil {
 		fmt.Println("Erro:", err)
 		return false
@@ -44,12 +44,12 @@ func sendRequest(port string, jsonRoutes []byte) bool {
 func StartProcessRequestQueue() {
 	go func() {
 		for request := range RequestQueueOne {
-			request.ResponseCh <- sendRequest(request.Port, request.DataJson)
+			request.ResponseCh <- sendRequest(request.ServerAddres, request.Port, request.DataJson)
 		}
 	}()
 	go func() {
 		for request := range RequestQueueTwo {
-			request.ResponseCh <- sendRequest(request.Port, request.DataJson)
+			request.ResponseCh <- sendRequest(request.ServerAddres, request.Port, request.DataJson)
 		}
 	}()
 }

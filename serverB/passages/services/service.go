@@ -61,6 +61,7 @@ func SolicitationLocal(routes []graphs.Route, externalServerId int, externalCloc
 func sendBuyRequest(
 	routes []graphs.Route, serverId int,
 	clock vectorClock.VectorClock,
+	serverAddres string,
 	port string, wg *sync.WaitGroup,
 	channelBuy chan *queues.RequestBuy,
 	response chan bool) {
@@ -79,6 +80,7 @@ func sendBuyRequest(
 
 	request := queues.RequestBuy{
 		DataJson:   jsonRoutes,
+		ServerAddres: serverAddres,
 		Port:       port,
 		ResponseCh: make(chan bool),
 	}
@@ -88,8 +90,8 @@ func sendBuyRequest(
 	response <- confirmation
 }
 
-func sendRequestRollBack(port string, jsonRoutes []byte) bool {
-	resp, err := http.Post("http://"+os.Getenv("SERVER_ADDRESS")+":"+port+"/passages/rollback", "application/json", bytes.NewBuffer(jsonRoutes))
+func sendRequestRollBack(serverAddres string ,port string, jsonRoutes []byte) bool {
+	resp, err := http.Post("http://"+serverAddres+":"+port+"/passages/rollback", "application/json", bytes.NewBuffer(jsonRoutes))
 	if err != nil {
 		fmt.Println("Erro:", err)
 		return false
@@ -121,13 +123,13 @@ func Buy(routes []graphs.Route, externalServerId int, externalClock vectorClock.
 		responseTwo := make(chan bool, 1)
 		if routesCompanyOne != nil {
 			wg.Add(1)
-			go sendBuyRequest(routesCompanyOne, externalServerId, externalClock, os.Getenv("ONE_PORT"), &wg, queues.RequestQueueOne, responseOne)
+			go sendBuyRequest(routesCompanyOne, externalServerId, externalClock, os.Getenv("SERVER_ADDRESS_ONE"), os.Getenv("ONE_PORT"), &wg, queues.RequestQueueOne, responseOne)
 		} else {
 			responseOne <- false
 		}
 		if routesCompanyTwo != nil {
 			wg.Add(1)
-			go sendBuyRequest(routesCompanyTwo, externalServerId, externalClock, os.Getenv("TWO_PORT"), &wg, queues.RequestQueueTwo, responseTwo)
+			go sendBuyRequest(routesCompanyTwo, externalServerId, externalClock, os.Getenv("SERVER_ADDRESS_TWO"),os.Getenv("TWO_PORT"), &wg, queues.RequestQueueTwo, responseTwo)
 		} else {
 			responseTwo <- false
 		}
@@ -155,12 +157,12 @@ func Buy(routes []graphs.Route, externalServerId int, externalClock vectorClock.
 				data.Routes = routesCompanyTwo
 				jsonRoutesTwo, _ := json.Marshal(data)
 				fmt.Println("Rollback na empresa 2 ROTAS", routesCompanyTwo)
-				sendRequestRollBack(os.Getenv("TWO_PORT"), jsonRoutesTwo)
+				sendRequestRollBack(os.Getenv("SERVER_ADDRESS_TWO"),os.Getenv("TWO_PORT"), jsonRoutesTwo)
 			} else if !responseChTwo && responseChOne && routesCompanyOne != nil {
 				data.Routes = routesCompanyOne
 				jsonRoutesOne, _ := json.Marshal(data)
 				fmt.Println("Rollback na empresa 1 ROTAS", routesCompanyOne)
-				sendRequestRollBack(os.Getenv("ONE_PORT"), jsonRoutesOne)
+				sendRequestRollBack(os.Getenv("SERVER_ADDRESS_ONE"),os.Getenv("ONE_PORT"), jsonRoutesOne)
 			}
 			return false, nil
 		}
@@ -200,7 +202,7 @@ func getOtherFlights() (map[string][]graphs.Route, map[string][]graphs.Route) {
 	var flightsOne map[string][]graphs.Route
 	var flightsTwo map[string][]graphs.Route
 
-	respOne, _ := http.Get("http://" + os.Getenv("SERVER_ADDRESS") + ":" + os.Getenv("ONE_PORT") + "/passages/flights") // Fazendo uma requisição ao servidor B
+	respOne, _ := http.Get("http://" + os.Getenv("SERVER_ADDRESS_ONE") + ":" + os.Getenv("ONE_PORT") + "/passages/flights") // Fazendo uma requisição ao servidor B
 	if respOne != nil {
 		defer respOne.Body.Close()
 		if err := json.NewDecoder(respOne.Body).Decode(&flightsOne); err != nil {
@@ -208,7 +210,7 @@ func getOtherFlights() (map[string][]graphs.Route, map[string][]graphs.Route) {
 		}
 	}
 
-	respTwo, _ := http.Get("http://" + os.Getenv("SERVER_ADDRESS") + ":" + os.Getenv("TWO_PORT") + "/passages/flights") // Fazendo uma requisição ao servidor C
+	respTwo, _ := http.Get("http://" + os.Getenv("SERVER_ADDRESS_TWO") + ":" + os.Getenv("TWO_PORT") + "/passages/flights") // Fazendo uma requisição ao servidor C
 	if respTwo != nil {
 		defer respTwo.Body.Close()
 		if err := json.NewDecoder(respTwo.Body).Decode(&flightsTwo); err != nil {
