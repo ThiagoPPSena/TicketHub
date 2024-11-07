@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"net/http"
+	"os"
 	"sharedPass/graphs"
 	"sharedPass/vectorClock"
 	"sort"
@@ -30,7 +31,7 @@ var RequestQueueTwo = make(chan *RequestBuy)
 var mutex sync.Mutex
 
 func sendRequest(port string, jsonRoutes []byte) bool {
-	resp, err := http.Post("http://localhost:"+port+"/passages/buy", "application/json", bytes.NewBuffer(jsonRoutes))
+	resp, err := http.Post("http://"+os.Getenv("SERVER_ADDRESS")+":"+port+"/passages/buy", "application/json", bytes.NewBuffer(jsonRoutes))
 	if err != nil {
 		fmt.Println("Erro:", err)
 		return false

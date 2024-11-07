@@ -11,4 +11,5 @@ RUN go build -o /main
 # expose the port
 EXPOSE 8082
 
+
 CMD [ "/main" ]

@@ -89,7 +89,7 @@ func sendBuyRequest(
 }
 
 func sendRequestRollBack(port string, jsonRoutes []byte) bool {
-	resp, err := http.Post("http://localhost:"+port+"/passages/rollback", "application/json", bytes.NewBuffer(jsonRoutes))
+	resp, err := http.Post("http://"+os.Getenv("SERVER_ADDRESS")+":"+port+"/passages/rollback", "application/json", bytes.NewBuffer(jsonRoutes))
 	if err != nil {
 		fmt.Println("Erro:", err)
 		return false
@@ -139,8 +139,8 @@ func Buy(routes []graphs.Route, externalServerId int, externalClock vectorClock.
 		fmt.Println("External", externalServerId != vectorClock.ServerId, "ROUTES", routesCompanylocal)
 		fmt.Println("L:", responseLocal, routesCompanylocal != nil, "R1", responseChOne, routesCompanyOne != nil, "R2", responseChTwo, routesCompanyTwo != nil)
 
-		if ((!responseChOne || !responseChTwo) && (routesCompanyOne != nil && routesCompanyTwo != nil)) || 
-		(responseLocal && ((!responseChOne && routesCompanyOne != nil) || (!responseChTwo && routesCompanyTwo != nil))) {
+		if ((!responseChOne || !responseChTwo) && (routesCompanyOne != nil && routesCompanyTwo != nil)) ||
+			(responseLocal && ((!responseChOne && routesCompanyOne != nil) || (!responseChTwo && routesCompanyTwo != nil))) {
 			data := collections.Body{
 				Routes:   nil,
 				Clock:    &externalClock,
@@ -200,7 +200,7 @@ func getOtherFlights() (map[string][]graphs.Route, map[string][]graphs.Route) {
 	var flightsOne map[string][]graphs.Route
 	var flightsTwo map[string][]graphs.Route
 
-	respOne, _ := http.Get("http://localhost:" + os.Getenv("ONE_PORT") + "/passages/flights") // Fazendo uma requisição ao servidor B
+	respOne, _ := http.Get("http://" + os.Getenv("SERVER_ADDRESS") + ":" + os.Getenv("ONE_PORT") + "/passages/flights") // Fazendo uma requisição ao servidor B
 	if respOne != nil {
 		defer respOne.Body.Close()
 		if err := json.NewDecoder(respOne.Body).Decode(&flightsOne); err != nil {
@@ -208,7 +208,7 @@ func getOtherFlights() (map[string][]graphs.Route, map[string][]graphs.Route) {
 		}
 	}
 
-	respTwo, _ := http.Get("http://localhost:" + os.Getenv("TWO_PORT") + "/passages/flights") // Fazendo uma requisição ao servidor C
+	respTwo, _ := http.Get("http://" + os.Getenv("SERVER_ADDRESS") + ":" + os.Getenv("TWO_PORT") + "/passages/flights") // Fazendo uma requisição ao servidor C
 	if respTwo != nil {
 		defer respTwo.Body.Close()
 		if err := json.NewDecoder(respTwo.Body).Decode(&flightsTwo); err != nil {
