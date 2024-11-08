@@ -17,7 +17,7 @@ var (
 func NewVectorClock(numServers int) {
     LocalClock = VectorClock(make([]int, numServers))
 }
-
+// Função para definir o id do servidor
 func SetServerId(id int) {
     ServerId = id
 }

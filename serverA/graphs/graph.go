@@ -6,6 +6,7 @@ import (
 	"os"
 )
 
+// Estrutura da Rota a ser armazenada no JSON
 type Route struct {
 	From    string
 	To      string
@@ -19,7 +20,7 @@ var Graph map[string][]Route
 // Função para ler as rotas do arquivo JSON
 func ReadRoutes() {
 	// Abre o arquivo JSON
-	file, err := os.Open("./files/routes.json")
+	file, err := os.Open("./files/routes.JSON")
 	if err != nil {
 		fmt.Println("Erro ao abrir o arquivo:", err)
 		return
@@ -41,12 +42,13 @@ func checkAvailability(routesToCheck []Route) bool {
 		if routes, ok := Graph[route.From]; ok {
 			found := false
 			for _, r := range routes {
+				// Verifica se a rota tem assentos disponíveis
 				if r.To == route.To && r.Seats > 0 {
 					found = true
 					break
 				}
 			}
-			if !found {
+			if !found { // Se rota não encontrada
 				return false
 			}
 		} else {
@@ -56,12 +58,12 @@ func checkAvailability(routesToCheck []Route) bool {
 	return true
 }
 
-// Função para decrementar o número de assentos
+// Função para decrementar o número de assentos (compra)
 func buySeat(origin, destination string) {
 	if routes, ok := Graph[origin]; ok {
 		for i, route := range routes {
 			if route.To == destination {
-				if route.Seats > 0 {
+				if route.Seats > 0 { // Se destino encontrado e tiver assentos, decrementa o número de assentos
 					Graph[origin][i].Seats--
 				}
 			}
@@ -84,7 +86,7 @@ func BuySeats(routesToBuy []Route) bool {
 }
 
 // Função para restaurar o número de assentos em caso de rollback
-func RollBack(routesToRollback []Route) (bool) {
+func RollBack(routesToRollback []Route) bool {
 	for _, route := range routesToRollback {
 		if routes, ok := Graph[route.From]; ok {
 			for i, r := range routes {
@@ -98,15 +100,20 @@ func RollBack(routesToRollback []Route) (bool) {
 	return true
 }
 
-// Função para salvar o grafo atualizado no arquivo JSON
+// Função SaveSeats salva o estado atualizado do grafo em um arquivo JSON.
 func SaveSeats() {
-	file, err := os.OpenFile("./files/routes.json", os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
+	// Abre o arquivo "routes.JSON" para escrita. Usa as flags:
+	// os.O_WRONLY - Permite somente escrita
+	// os.O_TRUNC - Trunca o arquivo para sobrescrever seu conteúdo
+	// os.O_CREATE - Cria o arquivo se ele não existir
+	file, err := os.OpenFile("./files/routes.JSON", os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
 	if err != nil {
 		fmt.Println("Erro ao abrir o arquivo:", err)
 		return
 	}
-	defer file.Close()
+	defer file.Close() // Garante o fechamento do arquivo após o término da função
 
+	// Inicializa um encoder JSON com indentação para formatar a saída no arquivo
 	encoder := json.NewEncoder(file)
 	encoder.SetIndent("", "  ")
 	if err := encoder.Encode(Graph); err != nil {

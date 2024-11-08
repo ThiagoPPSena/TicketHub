@@ -13,7 +13,7 @@ import (
 	"sort"
 	"sync"
 )
-
+// Função para pegar todas as rotas possíveis
 func GetAllRoutes(origin string, destination string) ([][]graphs.Route, error) {
 
 	filghtsOne, flightsTwo := getOtherFlights() // Pegando vôos dos outros servers
@@ -57,10 +57,11 @@ func SolicitationLocal(routes []graphs.Route, externalServerId int, externalCloc
 
 	return confirmation, nil
 }
-
+// Função para enviar a solicitação de compra para os outros servidores
 func sendBuyRequest(
 	routes []graphs.Route, serverId int,
 	clock vectorClock.VectorClock,
+	serverAddres string,
 	port string, wg *sync.WaitGroup,
 	channelBuy chan *queues.RequestBuy,
 	response chan bool) {
@@ -76,20 +77,23 @@ func sendBuyRequest(
 		response <- false
 		return
 	}
-
+	// Cria o formato da solicitação de compra
 	request := queues.RequestBuy{
 		DataJson:   jsonRoutes,
+		ServerAddres: serverAddres,
 		Port:       port,
 		ResponseCh: make(chan bool),
 	}
+	// Manda para o canal de comunicação de compra
 	channelBuy <- &request
+	// Recebe a resposta de efetuação de compra
 	confirmation := <-request.ResponseCh
 
 	response <- confirmation
 }
-
-func sendRequestRollBack(port string, jsonRoutes []byte) bool {
-	resp, err := http.Post("http://localhost:"+port+"/passages/rollback", "application/json", bytes.NewBuffer(jsonRoutes))
+// Função para enviar a solicitação de rollback para os outros servidores
+func sendRequestRollBack(serverAddres string ,port string, jsonRoutes []byte) bool {
+	resp, err := http.Post("http://"+serverAddres+":"+port+"/passages/rollback", "application/json", bytes.NewBuffer(jsonRoutes))
 	if err != nil {
 		fmt.Println("Erro:", err)
 		return false
@@ -97,9 +101,10 @@ func sendRequestRollBack(port string, jsonRoutes []byte) bool {
 	defer resp.Body.Close()
 	return true
 }
-
+// Função para comprar passagem
 func Buy(routes []graphs.Route, externalServerId int, externalClock vectorClock.VectorClock) (bool, error) {
 	var wg sync.WaitGroup
+	// Filtra as rotas por empresa
 	routesCompanylocal := filterByCompany(routes, os.Getenv("LOCAL_COMPANY"))
 	routesCompanyOne := filterByCompany(routes, os.Getenv("ONE_COMPANY"))
 	routesCompanyTwo := filterByCompany(routes, os.Getenv("TWO_COMPANY"))
@@ -114,46 +119,57 @@ func Buy(routes []graphs.Route, externalServerId int, externalClock vectorClock.
 			return false, err
 		}
 	}
-
-	if responseLocal {
-
+	// Verifica se a compra foi efetuada com sucesso ou se não a passagens locais
+	if responseLocal || (!responseLocal && routesCompanylocal == nil) {
 		responseOne := make(chan bool, 1)
 		responseTwo := make(chan bool, 1)
+		// Manda a solitação de compra para os outros servidores ao mesmo tempo
 		if routesCompanyOne != nil {
 			wg.Add(1)
-			go sendBuyRequest(routesCompanyOne, externalServerId, externalClock, os.Getenv("ONE_PORT"), &wg, queues.RequestQueueOne, responseOne)
+			go sendBuyRequest(routesCompanyOne, externalServerId, externalClock, os.Getenv("SERVER_ADDRESS_ONE"), os.Getenv("ONE_PORT"), &wg, queues.RequestQueueOne, responseOne)
 		} else {
-			responseOne <- true
+			responseOne <- false
 		}
 		if routesCompanyTwo != nil {
 			wg.Add(1)
-			go sendBuyRequest(routesCompanyTwo, externalServerId, externalClock, os.Getenv("TWO_PORT"), &wg, queues.RequestQueueTwo, responseTwo)
+			go sendBuyRequest(routesCompanyTwo, externalServerId, externalClock, os.Getenv("SERVER_ADDRESS_TWO"),os.Getenv("TWO_PORT"), &wg, queues.RequestQueueTwo, responseTwo)
 		} else {
-			responseTwo <- true
+			responseTwo <- false
 		}
 		wg.Wait()
 
 		// Verifica as respostas
 		responseChOne := <-responseOne
 		responseChTwo := <-responseTwo
-
-		if !responseChOne || !responseChTwo {
+		//Debug
+		fmt.Println("External", externalServerId != vectorClock.ServerId, "ROUTES", routesCompanylocal)
+		fmt.Println("L:", responseLocal, routesCompanylocal != nil, "R1", responseChOne, routesCompanyOne != nil, "R2", responseChTwo, routesCompanyTwo != nil)
+		// Vericações para saber se é necessario um rollback e quais servidores precisam de rollback
+		if ((!responseChOne || !responseChTwo) && (routesCompanyOne != nil && routesCompanyTwo != nil)) ||
+			(responseLocal && ((!responseChOne && routesCompanyOne != nil) || (!responseChTwo && routesCompanyTwo != nil))) {
 			data := collections.Body{
 				Routes:   nil,
 				Clock:    &externalClock,
 				ServerId: &vectorClock.ServerId,
 			}
-			SolicitationLocal(routesCompanylocal, externalServerId, externalClock, false)
-			if !responseChOne && responseChTwo {
+			if responseLocal { // Rollback local
+				//Debug
+				fmt.Println("Rollback na empresa local ROTAS", routesCompanylocal)
+				SolicitationLocal(routesCompanylocal, externalServerId, externalClock, false)
+			}
+			// Verifica a situação onde um ou outro servidor externo precisa de rollback
+			if !responseChOne && responseChTwo && routesCompanyTwo != nil {
 				data.Routes = routesCompanyTwo
 				jsonRoutesTwo, _ := json.Marshal(data)
-				fmt.Println("Rollback na empresa 2")
-				sendRequestRollBack(os.Getenv("TWO_PORT"), jsonRoutesTwo)
-			} else if !responseChTwo && responseChOne {
+				//Debug
+				fmt.Println("Rollback na empresa 2 ROTAS", routesCompanyTwo)
+				sendRequestRollBack(os.Getenv("SERVER_ADDRESS_TWO"),os.Getenv("TWO_PORT"), jsonRoutesTwo)
+			} else if !responseChTwo && responseChOne && routesCompanyOne != nil {
 				data.Routes = routesCompanyOne
 				jsonRoutesOne, _ := json.Marshal(data)
-				fmt.Println("Rollback na empresa 1")
-				sendRequestRollBack(os.Getenv("ONE_PORT"), jsonRoutesOne)
+				//Debug
+				fmt.Println("Rollback na empresa 1 ROTAS", routesCompanyOne)
+				sendRequestRollBack(os.Getenv("SERVER_ADDRESS_ONE"),os.Getenv("ONE_PORT"), jsonRoutesOne)
 			}
 			return false, nil
 		}
@@ -163,13 +179,13 @@ func Buy(routes []graphs.Route, externalServerId int, externalClock vectorClock.
 	vectorClock.LocalClock.Update(externalClock)
 	return false, nil
 }
-
+// Função para efetuar o rollback
 func RollBack(routes []graphs.Route, externalServerId int, externalClock vectorClock.VectorClock) (bool, error) {
 	routesCompanylocal := filterByCompany(routes, os.Getenv("LOCAL_COMPANY"))
 
 	// Atualizando o relógio vetorial
 	vectorClock.LocalClock.Update(externalClock)
-
+	// Efetuando o rollback
 	if routesCompanylocal != nil {
 		_, err := SolicitationLocal(routesCompanylocal, externalServerId, externalClock, false)
 		if err != nil {
@@ -192,7 +208,7 @@ func getOtherFlights() (map[string][]graphs.Route, map[string][]graphs.Route) {
 	var flightsOne map[string][]graphs.Route
 	var flightsTwo map[string][]graphs.Route
 
-	respOne, _ := http.Get("http://localhost:" + os.Getenv("ONE_PORT") + "/passages/flights") // Fazendo uma requisição ao servidor B
+	respOne, _ := http.Get("http://" + os.Getenv("SERVER_ADDRESS_ONE") + ":" + os.Getenv("ONE_PORT") + "/passages/flights") // Fazendo uma requisição ao servidor B
 	if respOne != nil {
 		defer respOne.Body.Close()
 		if err := json.NewDecoder(respOne.Body).Decode(&flightsOne); err != nil {
@@ -200,7 +216,7 @@ func getOtherFlights() (map[string][]graphs.Route, map[string][]graphs.Route) {
 		}
 	}
 
-	respTwo, _ := http.Get("http://localhost:" + os.Getenv("TWO_PORT") + "/passages/flights") // Fazendo uma requisição ao servidor C
+	respTwo, _ := http.Get("http://" + os.Getenv("SERVER_ADDRESS_TWO") + ":" + os.Getenv("TWO_PORT") + "/passages/flights") // Fazendo uma requisição ao servidor C
 	if respTwo != nil {
 		defer respTwo.Body.Close()
 		if err := json.NewDecoder(respTwo.Body).Decode(&flightsTwo); err != nil {

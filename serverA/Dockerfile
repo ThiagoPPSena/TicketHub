@@ -11,4 +11,7 @@ RUN go build -o /main
 # expose the port
 EXPOSE 8080
 
+ENV SERVER_ADDRESS_ONE=server2
+ENV SERVER_ADDRESS_TWO=server3
+
 CMD [ "/main" ]
