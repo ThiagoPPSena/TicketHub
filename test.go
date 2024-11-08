@@ -52,11 +52,11 @@ func getRoutes(url string) ([][]Route, error) {
 }
 
 func main() {
-	urlGet := craftGetURL("http://localhost:8080/passages/routes", "ARACAJU", "PORTO VELHO") // ARACAJU PORTO VELHO // BELO HORIZONTE SALVADOR
+	urlGet := craftGetURL("http://172.16.103.1:8080/passages/routes", "ARACAJU", "PORTO VELHO") // ARACAJU PORTO VELHO // BELO HORIZONTE SALVADOR
 	serverURLs := []string{
-		"http://localhost:8080/passages/buy",
-		"http://localhost:8081/passages/buy",
-		"http://localhost:8082/passages/buy",
+		"http://172.16.103.1:8080/passages/buy",
+		"http://172.16.103.1:8081/passages/buy",
+		"http://172.16.103.1:8082/passages/buy",
 	}
 
 	// Buscar as rotas via http e pegar a primeira rota
